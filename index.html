@@ -344,6 +344,307 @@ body { background: var(--bg); color: var(--text); font-family: "DM Sans", sans-s
   font-family: sans-serif;
 }
 #lb-close:hover { opacity: 1; }
+
+/* === Title Companies (Closings) === */
+.tc-shell { display: flex; flex-direction: column; gap: 0; }
+.tc-search-wrap {
+  position: relative;
+  max-width: 420px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+.tc-search-wrap input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 11px 14px 11px 38px;
+  border-radius: 8px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.tc-search-wrap input:focus { border-color: var(--accent); }
+.tc-search-wrap::before {
+  content: "\2384";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 16px;
+  pointer-events: none;
+}
+.tc-stat-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+.tc-stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  border-left: 3px solid var(--logo-teal);
+}
+.tc-stat-card.teal { border-left-color: var(--teal); }
+.tc-stat-card.amber { border-left-color: var(--amber); }
+.tc-stat-value { font-family: "Syne", sans-serif; font-size: 22px; font-weight: 800; color: var(--accent); line-height: 1.1; }
+.tc-stat-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+
+.tc-count {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tc-count::before {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  max-width: 24px;
+}
+
+.tc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+
+.tc-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(30,65,100,0.04);
+}
+.tc-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent);
+}
+.tc-card.attorney::before { background: var(--amber); }
+.tc-card.all-states::before { background: var(--teal); }
+.tc-card.frequent {
+  border: 2px solid rgba(243,138,129,0.55);
+  padding: 19px;
+  box-shadow: 0 2px 8px rgba(243,138,129,0.15);
+  animation: tcCardPulse 1s ease-in-out infinite;
+}
+.tc-card.frequent::before { background: var(--coral); }
+@keyframes tcCardPulse {
+  0%   { border-color: rgba(243,138,129,0.55); box-shadow: 0 2px 8px rgba(243,138,129,0.15), 0 0 0 0 rgba(243,138,129,0.5); }
+  50%  { border-color: rgba(243,138,129,1); box-shadow: 0 2px 12px rgba(243,138,129,0.3), 0 0 0 6px rgba(243,138,129,0); }
+  100% { border-color: rgba(243,138,129,0.55); box-shadow: 0 2px 8px rgba(243,138,129,0.15), 0 0 0 0 rgba(243,138,129,0); }
+}
+.tc-card:hover {
+  border-color: var(--border2);
+  box-shadow: 0 4px 12px rgba(30,65,100,0.08);
+  transform: translateY(-1px);
+}
+.tc-card.frequent:hover {
+  border-color: rgba(243,138,129,0.6);
+  box-shadow: 0 6px 16px rgba(243,138,129,0.2);
+  animation-play-state: paused;
+}
+
+.tc-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.tc-badges-left { display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 6px; }
+.tc-badges-left .tc-attorney-tag { width: 100%; margin-top: 0; }
+.tc-state-badge {
+  font-family: "Syne", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background: var(--accent-light);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+  white-space: nowrap;
+}
+.tc-card.attorney .tc-state-badge {
+  background: var(--amber-dim);
+  color: var(--amber);
+  border-color: rgba(196,122,18,0.25);
+}
+.tc-card.all-states .tc-state-badge {
+  background: var(--teal-dim);
+  color: var(--teal);
+  border-color: rgba(30,138,110,0.25);
+}
+.tc-frequent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "Syne", sans-serif;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 4px;
+  background: var(--coral-dim);
+  color: #c2453b;
+  border: 1px solid rgba(243,138,129,0.45);
+  white-space: nowrap;
+  animation: tcFreqBadgePulse 1s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(243,138,129,0.6);
+}
+@keyframes tcFreqBadgePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(243,138,129,0.6); border-color: rgba(243,138,129,0.45); }
+  50%  { box-shadow: 0 0 0 6px rgba(243,138,129,0); border-color: rgba(243,138,129,0.85); }
+  100% { box-shadow: 0 0 0 0 rgba(243,138,129,0); border-color: rgba(243,138,129,0.45); }
+}
+.tc-frequent-badge::before {
+  content: "\2605";
+  font-size: 11px;
+  color: var(--coral);
+  line-height: 1;
+  animation: tcStarFlash 1s ease-in-out infinite;
+}
+@keyframes tcStarFlash {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.55; transform: scale(1.15); }
+}
+.tc-attorney-tag {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-top: 6px;
+}
+.tc-company-name {
+  font-family: "Syne", sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+.tc-officer { font-size: 13px; color: var(--text-sec); margin-top: 4px; }
+.tc-officer-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-right: 6px;
+}
+.tc-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.tc-contact-row { display: flex; align-items: flex-start; gap: 8px; padding: 4px 0; }
+.tc-contact-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.tc-contact-link:hover { color: var(--accent); }
+.tc-contact-link:hover .tc-value { text-decoration: underline; }
+.tc-contact-row .tc-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  min-width: 48px;
+  padding-top: 2px;
+  flex-shrink: 0;
+}
+.tc-contact-row.tc-secondary .tc-value { color: var(--text-sec); }
+.tc-contact-row .tc-value { word-break: break-word; }
+
+.tc-copy-btn {
+  flex-shrink: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+  font-family: "DM Sans", sans-serif;
+}
+.tc-copy-btn:hover {
+  background: var(--accent-light);
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+.tc-copy-btn:active { transform: scale(0.92); }
+.tc-copy-btn svg { width: 13px; height: 13px; display: block; }
+.tc-copy-btn.copied {
+  background: var(--teal-dim);
+  color: var(--teal);
+  border-color: rgba(30,138,110,0.25);
+}
+
+.tc-phone-row .tc-phone-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  padding-top: 2px;
+}
+.tc-phone-item { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
+.tc-phone-item .tc-phone-name {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.tc-phone-item a { color: var(--text); text-decoration: none; transition: color 0.15s; }
+.tc-phone-item a:hover { color: var(--accent); text-decoration: underline; }
+.tc-phone-item .tc-copy-btn { width: 22px; height: 22px; }
+.tc-phone-item .tc-copy-btn svg { width: 11px; height: 11px; }
+
+.tc-no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  font-family: "Syne", sans-serif;
+  font-size: 16px;
+  background: var(--surface);
+  border: 1px dashed var(--border2);
+  border-radius: var(--radius-lg);
+}
+
+/* coral vars in case handbook doesn't already define them */
+:root { --coral: #f38a81; --coral-dim: #fdecea; }
+
+@media (max-width: 700px) {
+  .tc-stat-strip { grid-template-columns: 1fr; }
+  .tc-grid { grid-template-columns: 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -368,7 +669,7 @@ body { background: var(--bg); color: var(--text); font-family: "DM Sans", sans-s
     </div>
     <div class="nav-section">
       <div class="nav-section-label">Resources</div>
-      <button class="nav-item" onclick="goSection(this,'scorecard')"><span class="nav-dot"></span>Weekly Scorecard</button>
+      <button class="nav-item" onclick="goSection(this,'title-companies')"><span class="nav-dot"></span>Title Companies</button>
       <button class="nav-item" onclick="goSection(this,'tools')"><span class="nav-dot"></span>Quick Links</button>
     </div>
     <div class="nav-section">
@@ -1054,49 +1355,6 @@ body { background: var(--bg); color: var(--text); font-family: "DM Sans", sans-s
       </div>
     </div>
 
-    <!-- INVESTORFUSE CRM -->
-    <div id="section-scorecard" class="section">
-      <div class="section-header">
-        <div class="section-eyebrow">Performance tracking</div>
-        <div class="section-title">Weekly closer scorecard</div>
-        <div class="section-sub">Score each closer after every training session — 1 (needs work) to 5 (sharp). Use this weekly to spot who needs more reps on which skill.</div>
-      </div>
-      <div class="sc-table">
-        <div class="sc-row hdr"><div class="sc-cell">Skill</div><div class="sc-cell ctr">D1</div><div class="sc-cell ctr">D2</div><div class="sc-cell ctr">D3</div><div class="sc-cell ctr">D4</div><div class="sc-cell ctr">D5</div><div class="sc-cell ctr">D6</div><div class="sc-cell ctr">D7</div><div class="sc-cell ctr">D8</div><div class="sc-cell ctr">D9</div><div class="sc-cell ctr">D10</div></div>
-        <div class="sc-row"><div class="sc-cell">Opens calls with rapport in 60 seconds</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div></div>
-        <div class="sc-row"><div class="sc-cell">Identifies seller motivation by name</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div></div>
-        <div class="sc-row"><div class="sc-cell">Drives every call to a YES or NO</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div></div>
-        <div class="sc-row"><div class="sc-cell">Holds the line on price — never folds first</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div></div>
-        <div class="sc-row"><div class="sc-cell">Kills "think about it" in real time</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div></div>
-        <div class="sc-row"><div class="sc-cell">Asks directly for the close — no weak language</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div></div>
-        <div class="sc-row"><div class="sc-cell">Stays calm with hostile / tough sellers</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div></div>
-        <div class="sc-row"><div class="sc-cell">Follows up with new value every touch</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div></div>
-        <div class="sc-row"><div class="sc-cell">Reviews own calls and self-coaches daily</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div></div>
-        <div class="sc-row"><div class="sc-cell">Stays in the silence after the close</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div><div class="sc-cell ctr">/5</div></div>
-      </div>
-      <div class="dsec-label" style="margin-bottom:10px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)">After the 10-day curriculum — weekly drill rotation</div>
-      <div class="week-grid">
-        <div class="week-card"><h5>Wk 1 — Opening</h5><p>60-second open. Five different seller types (rushed, sad, suspicious, friendly, hostile). Closer adapts to each.</p></div>
-        <div class="week-card"><h5>Wk 2 — Motivation</h5><p>Find the WHY. Trainer plays a vague seller. Closer must identify which of the 7 motivations and confirm it back.</p></div>
-        <div class="week-card"><h5>Wk 3 — Decision</h5><p>No-decision-equals-fail. Closer must get YES or NO before the drill ends. "Think about it" fails the rep.</p></div>
-        <div class="week-card"><h5>Wk 4 — Objections</h5><p>Top 5 objections. Trainer fires each one rapid-fire. Closer must respond in under 5 seconds.</p></div>
-        <div class="week-card"><h5>Wk 5 — Price</h5><p>Hold-the-line. Seller pushes for more. Closer must justify, reframe, and trade — never just fold.</p></div>
-        <div class="week-card"><h5>Wk 6 — Stalls</h5><p>No-escape drill. Seller tries 4 different stalls. Closer must engage each one without sounding pushy.</p></div>
-        <div class="week-card"><h5>Wk 7 — Follow-up</h5><p>The breakup. Closer writes 5 different breakup texts and runs a live breakup call. Best gets shared with team.</p></div>
-        <div class="week-card"><h5>Wk 8 — Tough sellers</h5><p>Stay flat. Trainer plays angry, suspicious, sophisticated, multi-bid. Closer's voice stays calm throughout.</p></div>
-        <div class="week-card"><h5>Wk 9 — Close</h5><p>Direct close only. Closer can ONLY use strong closes. Any weak language fails the drill.</p></div>
-        <div class="week-card"><h5>Wk 10 — Tape review</h5><p>Self-coach the tape. Each closer presents their worst call from the week and a 1% improvement plan.</p></div>
-      </div>
-      <div class="live-deal-bar">
-        <h4>Live deal integration — do this every single day</h4>
-        <div class="live-deal-steps">
-          <div class="lds"><strong>Take that deal</strong>Ask "Who has a deal stuck right now?" Use it as the roleplay scenario. Real deals beat fake ones every time.</div>
-          <div class="lds"><strong>Fix that objection</strong>Drill the exact thing blocking it until the closer owns the response — not just understands it.</div>
-          <div class="lds"><strong>Script that close</strong>Write the exact words they should say when they call back. Then roleplay it before they touch the phone.</div>
-        </div>
-      </div>
-    </div>
-
     <!-- TOOLS -->
     <div id="section-tools" class="section">
       <div class="section-header">
@@ -1120,6 +1378,40 @@ body { background: var(--bg); color: var(--text); font-family: "DM Sans", sans-s
       <div class="tools-grid">
         <a class="tool-card" href="https://onehouroffers.github.io/Closing_Day/" target="_blank" rel="noopener"><div class="tool-name">Guide to Closing Day</div><div class="tool-action">Open &rarr;</div><div class="tool-desc">Step-by-step reference for what happens on closing day.</div></a>
         <a class="tool-card" href="https://onehouroffers.github.io/Deal_Map/" target="_blank" rel="noopener"><button type="button" class="copy-btn" onclick="copyLink(event, this, 'https://onehouroffers.github.io/Deal_Map/')">Copy link</button><div class="tool-name">Deal Map</div><div class="tool-action">Open &rarr;</div><div class="tool-desc">Visual map of deals we've closed &mdash; settlement statements, HUDs, and proof of closings. Share with sellers as social proof.</div></a>
+      </div>
+    </div>
+
+
+    <!-- TITLE COMPANIES -->
+    <div id="section-title-companies" class="section">
+      <div class="section-header">
+        <div class="section-eyebrow">Closings</div>
+        <div class="section-title">Title Companies</div>
+        <div class="section-sub">Vetted title companies and attorneys for closings across the country. Search by state, company, or escrow officer. Click a copy button to grab any email or phone.</div>
+      </div>
+
+      <div class="tc-shell">
+        <div class="tc-search-wrap">
+          <input type="text" id="tc-search" placeholder="Search state, company, or escrow officer...">
+        </div>
+
+        <div class="tc-stat-strip">
+          <div class="tc-stat-card">
+            <div class="tc-stat-value" id="tc-stat-total">16</div>
+            <div class="tc-stat-label">Total Partners</div>
+          </div>
+          <div class="tc-stat-card teal">
+            <div class="tc-stat-value" id="tc-stat-states">15</div>
+            <div class="tc-stat-label">States Covered</div>
+          </div>
+          <div class="tc-stat-card amber">
+            <div class="tc-stat-value" id="tc-stat-attorney">4</div>
+            <div class="tc-stat-label">Attorney States</div>
+          </div>
+        </div>
+
+        <div class="tc-count" id="tc-count">All Partners</div>
+        <div class="tc-grid" id="tc-grid"></div>
       </div>
     </div>
 
@@ -1170,7 +1462,7 @@ function goDay(btn, n) {
   document.querySelectorAll('.day-tab').forEach(b => b.classList.remove('on'));
   document.getElementById('day' + n).classList.add('on');
   btn.classList.add('on');
-  ['schedule','crm','groups','dead','scorecard','tools'].forEach(s => {
+  ['schedule','crm','groups','dead','tools'].forEach(s => {
     document.getElementById('section-' + s).classList.remove('active');
   });
   document.getElementById('section-training').classList.add('active');
@@ -1187,6 +1479,178 @@ function lbClose() {
   document.body.style.overflow = '';
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); });
+
+/* === Title Companies === */
+(function(){
+  const companies = [
+    { state: "Alabama", attorney: true, company: "Parmer Law", email: "rkaalaas@parmerlaw.com", officer: "Rhiannon Kaalaas", phone: "(205) 871-1440" },
+    { state: "Arizona", company: "Title Services of the Valley", email: "Tanthony@tsvaz.com", officer: "Lori Roberts", phone: "(480) 385-1030" },
+    { state: "California", company: "Harbor Lights Escrow", email: "teammary@harborlightsescrow.com", officer: "Annette Kaio", phone: "(310) 241-0058", secondary: "annette@harborlightsescrow.com" },
+    { state: "California", company: "Loyalty Escrow", email: "deanna@loyaltyescrow.com", officer: "Deanna Beltran", phone: "626-545-2991", secondary: "silvia@loyaltyescrow.com, assistant1@loyaltyescrow.com" },
+    { state: "Colorado", company: "First Integrity Title", email: "kcervantes@firstintegritytitle.com", officer: "Krystle Cervantes", phone: "(720) 907-0430" },
+    { state: "Florida", company: "AMZ Title", email: "neworders@amztitle.com", officer: "Michelle Obregon", phone: "(813) 200-6130", secondary: "michelle@amztitle.com" },
+    { state: "Georgia", attorney: true, company: "Troy King", email: "Gabby@troykinglawfirm.com", officer: "Grayston Custodia", phone: "(770) 702-0800" },
+    { state: "Idaho", company: "Pioneer Title Co", email: "BDaniel@pioneertitleco.com", officer: "", phone: "", secondary: "clish@pioneertitleco.com" },
+    { state: "Kentucky", attorney: true, company: "Rounsavall Title", email: "kam@rtitlegroup.com", officer: "Kam Klink", phone: "(502) 893-3336" },
+    { state: "Nevada", company: "Equity Title of Nevada", email: "LaylaM@equitynv.com", officer: "Layla McMachen", phone: "(702) 462-6000" },
+    { state: "Oklahoma", company: "First American Title", email: "cfournier@firstam.com", officer: "Candice Fournier", phone: "(405) 529-5521" },
+    { state: "Ohio (Cleveland)", frequent: true, company: "National Title Experts", email: "anthony@mynationaltitle.com", officer: "Anthony Tagliarina, Mark Madden", phones: [{ label: "Anthony", number: "(440) 725-8111" }, { label: "Mark", number: "(216) 299-2047" }], secondary: "mark@mynationaltitle.com" },
+    { state: "Pennsylvania", attorney: true, company: "Parkland Abstract", email: "info@parklandabstract.com", officer: "Matthew Koff", phone: "(610) 433-3790" },
+    { state: "Texas", company: "Stellar Title", email: "Mavs@stellartitleco.com", officer: "Crystal Aguirre", phone: "(817) 479-5677", secondary: "Crystal@Stellartitleco.com" },
+    { state: "Washington", company: "Ticor Title Co", email: "Teambarker@ticortitle.com", officer: "", phone: "(253) 765-7255" },
+    { state: "All States", allStates: true, company: "Closed Title", email: "NStalls@investors-title.com", officer: "", phone: "", secondary: "wdevenne@closedtitle.com" }
+  ];
+
+  const grid = document.getElementById("tc-grid");
+  const searchInput = document.getElementById("tc-search");
+  const countEl = document.getElementById("tc-count");
+  if (!grid || !searchInput || !countEl) return;
+
+  const copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+  const checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+
+  const uniqueStates = new Set(companies.map(c => c.state.replace(/ \(.*\)/, ""))).size;
+  const attorneyCount = companies.filter(c => c.attorney).length;
+  document.getElementById("tc-stat-total").textContent = companies.length;
+  document.getElementById("tc-stat-states").textContent = uniqueStates;
+  document.getElementById("tc-stat-attorney").textContent = attorneyCount;
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+  function firstEmail(s) { return s.split(",")[0].trim(); }
+  function firstPhone(s) { return s.split(",")[0].trim(); }
+
+  function sortList(list) {
+    const frequents = list.filter(c => c.frequent);
+    const rest = list.filter(c => !c.frequent);
+    return [...frequents, ...rest];
+  }
+
+  function render(list, query) {
+    if (list.length === 0) {
+      grid.innerHTML = '<div class="tc-no-results">No companies match your search.</div>';
+      countEl.textContent = "0 results";
+      return;
+    }
+    countEl.textContent = query ? `${list.length} Match${list.length === 1 ? "" : "es"}` : `All Partners \u00B7 ${list.length}`;
+
+    grid.innerHTML = list.map(c => {
+      const classes = ["tc-card"];
+      if (c.frequent) classes.push("frequent");
+      if (c.attorney) classes.push("attorney");
+      if (c.allStates) classes.push("all-states");
+      const emailHref = `mailto:${firstEmail(c.email)}`;
+      const phoneHref = c.phone ? `tel:${firstPhone(c.phone).replace(/[^\d+]/g, "")}` : null;
+
+      return `
+        <div class="${classes.join(" ")}">
+          <div class="tc-card-top">
+            <div class="tc-badges-left">
+              <span class="tc-state-badge">${escapeHtml(c.state)}</span>
+              ${c.frequent ? '<span class="tc-frequent-badge">Frequent</span>' : ""}
+              ${c.attorney ? '<div class="tc-attorney-tag">Attorney State</div>' : ""}
+            </div>
+          </div>
+          <div>
+            <div class="tc-company-name">${escapeHtml(c.company)}</div>
+            ${c.officer ? `<div class="tc-officer"><span class="tc-officer-label">Escrow Officer</span>${escapeHtml(c.officer)}</div>` : ""}
+          </div>
+          <div class="tc-contact">
+            <div class="tc-contact-row">
+              <a class="tc-contact-link" href="${emailHref}">
+                <span class="tc-label">Email</span>
+                <span class="tc-value">${escapeHtml(c.email)}</span>
+              </a>
+              <button class="tc-copy-btn" data-copy="${escapeHtml(c.email)}" aria-label="Copy email" title="Copy email">${copyIcon}</button>
+            </div>
+            ${c.secondary ? `
+              <div class="tc-contact-row tc-secondary">
+                <a class="tc-contact-link" href="mailto:${firstEmail(c.secondary)}">
+                  <span class="tc-label">CC</span>
+                  <span class="tc-value">${escapeHtml(c.secondary)}</span>
+                </a>
+                <button class="tc-copy-btn" data-copy="${escapeHtml(c.secondary)}" aria-label="Copy email" title="Copy email">${copyIcon}</button>
+              </div>
+            ` : ""}
+            ${c.phones && c.phones.length ? `
+              <div class="tc-contact-row tc-phone-row">
+                <span class="tc-label">Phone</span>
+                <div class="tc-phone-items">
+                  ${c.phones.map(p => `
+                    <span class="tc-phone-item">
+                      <span class="tc-phone-name">${escapeHtml(p.label)}</span>
+                      <a href="tel:${p.number.replace(/[^\d+]/g, "")}">${escapeHtml(p.number)}</a>
+                      <button class="tc-copy-btn" data-copy="${escapeHtml(p.number)}" aria-label="Copy ${escapeHtml(p.label)}'s phone" title="Copy ${escapeHtml(p.label)}'s phone">${copyIcon}</button>
+                    </span>
+                  `).join("")}
+                </div>
+              </div>
+            ` : (c.phone ? `
+              <div class="tc-contact-row">
+                <a class="tc-contact-link" href="${phoneHref}">
+                  <span class="tc-label">Phone</span>
+                  <span class="tc-value">${escapeHtml(c.phone)}</span>
+                </a>
+                <button class="tc-copy-btn" data-copy="${escapeHtml(c.phone)}" aria-label="Copy phone" title="Copy phone">${copyIcon}</button>
+              </div>
+            ` : "")}
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  grid.addEventListener("click", e => {
+    const btn = e.target.closest(".tc-copy-btn");
+    if (!btn) return;
+    e.preventDefault();
+    const value = btn.dataset.copy || "";
+
+    const fallback = () => {
+      const ta = document.createElement("textarea");
+      ta.value = value;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "absolute";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch (_) {}
+      document.body.removeChild(ta);
+    };
+
+    const showCopied = () => {
+      btn.classList.add("copied");
+      btn.innerHTML = checkIcon;
+      setTimeout(() => {
+        btn.classList.remove("copied");
+        btn.innerHTML = copyIcon;
+      }, 1400);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(value).then(showCopied, () => { fallback(); showCopied(); });
+    } else {
+      fallback();
+      showCopied();
+    }
+  });
+
+  searchInput.addEventListener("input", e => {
+    const q = e.target.value.toLowerCase().trim();
+    if (!q) { render(sortList(companies), ""); return; }
+    const filtered = companies.filter(c =>
+      c.state.toLowerCase().includes(q) ||
+      c.company.toLowerCase().includes(q) ||
+      (c.officer && c.officer.toLowerCase().includes(q)) ||
+      c.email.toLowerCase().includes(q)
+    );
+    render(sortList(filtered), q);
+  });
+
+  render(sortList(companies), "");
+})();
+
 </script>
 
 <!-- Lightbox overlay -->
