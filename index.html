@@ -657,6 +657,7 @@ body { background: var(--bg); color: var(--text); font-family: "DM Sans", sans-s
 .da-intro { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 15px 18px; margin-bottom: 24px; font-size: 13px; color: var(--text-sec); display: flex; gap: 13px; align-items: flex-start; max-width: 640px; }
 .da-intro-icon { width: 34px; height: 34px; border-radius: 9px; background: var(--accent-light); display: grid; place-items: center; flex-shrink: 0; font-size: 16px; }
 .da-intro strong { color: var(--text); font-weight: 600; }
+.da-intro-list { display: flex; flex-direction: column; gap: 7px; }
 .da-form { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 26px 24px; max-width: 640px; }
 .da-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 18px; }
 .da-field { display: flex; flex-direction: column; gap: 6px; }
@@ -1498,7 +1499,12 @@ body { background: var(--bg); color: var(--text); font-family: "DM Sans", sans-s
 
       <div class="da-intro">
         <div class="da-intro-icon">📝</div>
-        <div>Fields marked <span style="color:var(--coral)">*</span> are required. Double-check the <strong>Signing Email</strong> and <strong>Purchase Price</strong> before you send &mdash; those two cause the most contract re-dos.</div>
+        <div class="da-intro-list">
+          <div>Contract will be drafted and sent to you via <strong>DocuSign</strong>.</div>
+          <div>You will <strong>ALWAYS sign as TIMMY LE</strong>. Once you sign and complete, the seller will receive the Agreement.</div>
+          <div><strong style="color:var(--coral)">*MUST HAVE SELLER ON THE PHONE*</strong></div>
+          <div>If contracts are viewed by the seller and not completed within <strong>30 minutes</strong>, the Agreement will be <strong style="color:var(--coral)">VOIDED</strong>.</div>
+        </div>
       </div>
 
       <form class="da-form" id="da-form" novalidate>
