@@ -711,6 +711,12 @@ body { background: var(--bg); color: var(--text); font-family: "DM Sans", sans-s
 .da-snip:hover { background: var(--logo-teal); color: #fff; }
 .da-snip.on { background: var(--accent); color: #fff; }
 .da-snip.on:hover { background: #15324e; }
+.da-acq { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+.da-acq-btn { background:var(--surface); border:1px solid var(--border2); color:var(--text-sec); border-radius:var(--radius); padding:10px 18px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.12s,border-color 0.12s,color 0.12s; }
+.da-acq-btn:hover { border-color:var(--accent); color:var(--text); }
+.da-acq-btn.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+.da-acq-err { display:none; font-size:11px; color:var(--red); margin-top:-14px; margin-bottom:16px; }
+.da-acq-err.show { display:block; }
 </style>
 </head>
 <body>
@@ -1496,6 +1502,15 @@ body { background: var(--bg); color: var(--text); font-family: "DM Sans", sans-s
       </div>
 
       <form class="da-form" id="da-form" novalidate>
+        <div class="da-subhead">Sr. ACQ — who's sending this <span class="req">*</span></div>
+        <div class="da-acq" id="da-acq">
+          <button type="button" class="da-acq-btn" data-acq="Adam Landy" data-acq-email="Adam@1houroffers.com">Adam Landy</button>
+          <button type="button" class="da-acq-btn" data-acq="Nathan Myers" data-acq-email="Nathan@1houroffers.com">Nathan Myers</button>
+        </div>
+        <div class="da-acq-err" id="da-acq-err">Pick who's sending this contract.</div>
+        <input type="hidden" id="da-acq-val" name="acq">
+        <input type="hidden" id="da-acq-email" name="acqEmail">
+
         <div class="da-subhead">Signer</div>
         <div class="da-grid">
           <div class="da-field">
@@ -2077,8 +2092,22 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     }
   });
 
+  // Sending ACQ selector (single-select)
+  document.querySelectorAll('.da-acq-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.da-acq-btn').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      el('da-acq-val').value = btn.dataset.acq || '';
+      el('da-acq-email').value = btn.dataset.acqEmail || '';
+      document.getElementById('da-acq-err').classList.remove('show');
+    });
+  });
+
   function validate(){
     let ok=true, firstBad=null;
+    const acqErr = document.getElementById('da-acq-err');
+    if(!el('da-acq-val').value){ acqErr.classList.add('show'); ok=false; firstBad = document.querySelector('.da-acq-btn'); }
+    else acqErr.classList.remove('show');
     fields.forEach(f=>{
       const inp = el(f.id), wrap = inp.closest('.da-field'), val = inp.value.trim();
       let bad = false;
@@ -2106,6 +2135,8 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
   function buildSummary(){
     const v = id => el(id).value.trim();
     const lines = [];
+    const acqVal = el('da-acq-val').value, acqEmail = el('da-acq-email').value;
+    if(acqVal) lines.push('Sr. ACQ - ' + acqVal + (acqEmail ? ' (' + acqEmail + ')' : ''));
     lines.push('Signer Name - '   + v('da-signer'));
     lines.push('Signing Email - ' + v('da-sign-email'));
     if(s2Toggle.checked){
@@ -2133,7 +2164,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     el('da-summary').textContent = buildSummary();
     el('da-success-text').textContent = sent ? 'Sent to TC' : 'Ready to send';
     el('da-note').textContent = sent
-      ? "Your TC got this at transactions@1houroffers.com. Copy it too if you want a record."
+      ? "Purchase Agreement details have been emailed to Transactions@1houroffers.com"
       : "Endpoint not connected yet — copy this and send it to your TC, or paste your Google Script URL into the form's config to auto-send.";
     form.style.display = 'none';
     el('da-success').classList.add('show');
@@ -2168,6 +2199,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
 
   function resetForm(){
     form.reset();
+    document.querySelectorAll('.da-acq-btn').forEach(b=>b.classList.remove('on'));
+    el('da-acq-val').value=''; el('da-acq-email').value='';
+    document.getElementById('da-acq-err').classList.remove('show');
     emdTouched = false;
     pocTouched = false; emailTouched = false;
     acClose();
