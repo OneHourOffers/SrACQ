@@ -32,6 +32,9 @@ body{ background:var(--bg); color:var(--text); font-family:"DM Sans",sans-serif;
 .copy-btn{ flex-shrink:0; background:var(--accent-light); color:var(--accent); border:none; border-radius:8px; padding:7px 14px; font-family:inherit; font-size:11.5px; font-weight:600; cursor:pointer; transition:background 0.12s,color 0.12s; min-width:78px; }
 .copy-btn:hover{ background:var(--logo-teal); color:#fff; }
 .copy-btn.done{ background:var(--logo-teal); color:#fff; }
+.copy-group{ display:block; margin:12px 24px 2px; background:var(--accent-light); color:var(--accent); border:1px dashed var(--border2); border-radius:8px; padding:9px 12px; font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; text-align:center; transition:background 0.12s,color 0.12s,border-color 0.12s; }
+.copy-group:hover{ background:var(--logo-teal); color:#fff; border-color:transparent; }
+.copy-group.done{ background:var(--logo-teal); color:#fff; border-color:transparent; }
 .empty{ padding:44px 24px; text-align:center; color:var(--text-muted); font-size:13px; line-height:1.7; }
 .foot{ text-align:center; font-size:11px; color:var(--text-muted); margin-top:16px; letter-spacing:0.04em; }
 @media (max-width:520px){ .row{ flex-wrap:wrap; } .copy-btn{ width:100%; } }
@@ -92,8 +95,27 @@ body{ background:var(--bg); color:var(--text); font-family:"DM Sans",sans-serif;
   card.appendChild(head);
 
   const rows = document.createElement('div');
+  const contact = { poc:'', phone:'', email:'' };
+  const contactBlock = () => {
+    const out = [];
+    if (contact.poc)   out.push('P.O.C - '  + contact.poc.trim());
+    if (contact.phone) out.push('Phone - '  + contact.phone.trim());
+    if (contact.email) out.push('E-Mail - ' + contact.email.trim());
+    return out.join('\n');
+  };
   data.fields.forEach(pair => {
     const label = pair[0], value = pair[1];
+    if (label === 'POC') contact.poc = value;
+    else if (label === 'Phone') contact.phone = value;
+    else if (label === 'E-Mail') contact.email = value;
+    if (label === 'POC') {
+      const gb = document.createElement('button');
+      gb.className = 'copy-group';
+      gb.textContent = 'Copy POC · Phone · E-Mail';
+      gb.dataset.label = gb.textContent;
+      gb.addEventListener('click', () => copy(contactBlock(), gb));
+      rows.appendChild(gb);
+    }
     const row = document.createElement('div'); row.className = 'row';
     const main = document.createElement('div'); main.className = 'row-main';
     const l = document.createElement('div'); l.className = 'row-label'; l.textContent = label;
