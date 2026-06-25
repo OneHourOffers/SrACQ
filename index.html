@@ -2227,5 +2227,30 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
   el('da-reset').addEventListener('click', resetForm);
 })();
 </script>
+<script>
+/* Hash deep-linking: lets external links open a specific section,
+   e.g. .../Sr_ACQ_Handbook/#title-companies or #draft-agreement */
+(function(){
+  function openFromHash(){
+    var id = (location.hash || '').replace('#','').trim();
+    if(!id) return;
+    var sec = document.getElementById('section-' + id);
+    if(!sec) return;
+    var btn = Array.prototype.filter.call(
+      document.querySelectorAll('.nav-item'),
+      function(b){ return (b.getAttribute('onclick')||'').indexOf("'"+id+"'") !== -1; }
+    )[0];
+    if(btn && typeof goSection === 'function'){
+      goSection(btn, id);
+    } else {
+      document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+      sec.classList.add('active');
+    }
+    if(sec.scrollIntoView) sec.scrollIntoView({behavior:'auto', block:'start'});
+  }
+  window.addEventListener('DOMContentLoaded', openFromHash);
+  window.addEventListener('hashchange', openFromHash);
+})();
+</script>
 </body>
 </html>
