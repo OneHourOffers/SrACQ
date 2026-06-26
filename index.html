@@ -633,6 +633,12 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
 .tc-phone-item .tc-copy-btn { width: 22px; height: 22px; }
 .tc-phone-item .tc-copy-btn svg { width: 11px; height: 11px; }
 
+/* Phone numbers stay on one line — never break mid-number (word-break is for long emails only) */
+.tc-contact-link[href^="tel:"] .tc-value { white-space: nowrap; word-break: normal; }
+.tc-phone-item a { white-space: nowrap; }
+.tc-phone-row .tc-phone-items { gap: 8px 16px; }
+.tc-phone-item { gap: 7px; }
+
 .tc-no-results {
   grid-column: 1 / -1;
   text-align: center;
@@ -1763,6 +1769,13 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
   }
   function firstEmail(s) { return s.split(",")[0].trim(); }
   function firstPhone(s) { return s.split(",")[0].trim(); }
+  function fmtPhone(s) {
+    if (!s) return "";
+    let d = String(s).replace(/\D/g, "");
+    if (d.length === 11 && d[0] === "1") d = d.slice(1); // drop leading country code
+    if (d.length !== 10) return String(s).trim();        // leave non-standard numbers untouched
+    return "(" + d.slice(0,3) + ")" + d.slice(3,6) + "-" + d.slice(6);
+  }
 
   function sortList(list) {
     const frequents = list.filter(c => c.frequent);
@@ -1826,19 +1839,19 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
                   ${c.phones.map(p => `
                     <span class="tc-phone-item">
                       <span class="tc-phone-name">${escapeHtml(p.label)}</span>
-                      <a href="tel:${p.number.replace(/[^\d+]/g, "")}">${escapeHtml(p.number)}</a>
-                      <button class="tc-copy-btn" data-copy="${escapeHtml(p.number)}" aria-label="Copy ${escapeHtml(p.label)}'s phone" title="Copy ${escapeHtml(p.label)}'s phone">${copyIcon}</button>
+                      <a href="tel:${p.number.replace(/[^\d+]/g, "")}">${escapeHtml(fmtPhone(p.number))}</a>
+                      <button class="tc-copy-btn" data-copy="${escapeHtml(fmtPhone(p.number))}" aria-label="Copy ${escapeHtml(p.label)}'s phone" title="Copy ${escapeHtml(p.label)}'s phone">${copyIcon}</button>
                     </span>
                   `).join("")}
                 </div>
               </div>
             ` : (c.phone ? `
-              <div class="tc-contact-row">
+              <div class="tc-contact-row tc-phone-row">
                 <a class="tc-contact-link" href="${phoneHref}">
                   <span class="tc-label">Phone</span>
-                  <span class="tc-value">${escapeHtml(c.phone)}</span>
+                  <span class="tc-value">${escapeHtml(fmtPhone(c.phone))}</span>
                 </a>
-                <button class="tc-copy-btn" data-copy="${escapeHtml(c.phone)}" aria-label="Copy phone" title="Copy phone">${copyIcon}</button>
+                <button class="tc-copy-btn" data-copy="${escapeHtml(fmtPhone(c.phone))}" aria-label="Copy phone" title="Copy phone">${copyIcon}</button>
               </div>
             ` : "")}
           </div>
