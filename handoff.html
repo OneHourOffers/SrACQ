@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Contract Intake · One Hour Offers</title>
+<title>Agreement Intake Form · One Hour Offers</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -43,7 +43,7 @@ body{ background:var(--bg); color:var(--text); font-family:"DM Sans",sans-serif;
 <body>
 <div class="wrap">
   <div class="card" id="card"><div class="empty">Loading deal…</div></div>
-  <div class="foot">ONE HOUR OFFERS · CONTRACT INTAKE</div>
+  <div class="foot">ONE HOUR OFFERS · AGREEMENT INTAKE FORM</div>
 </div>
 <script>
 (function(){
@@ -83,7 +83,7 @@ body{ background:var(--bg); color:var(--text); font-family:"DM Sans",sans-serif;
   card.innerHTML = '';
 
   const head = document.createElement('div'); head.className = 'head';
-  const eb = document.createElement('div'); eb.className = 'eyebrow'; eb.textContent = 'Contract Intake';
+  const eb = document.createElement('div'); eb.className = 'eyebrow'; eb.textContent = 'Agreement Intake Form';
   const ti = document.createElement('div'); ti.className = 'title'; ti.textContent = data.addr || 'Draft Agreement';
   head.appendChild(eb); head.appendChild(ti);
   if (data.ts) { const sub = document.createElement('div'); sub.className = 'sub'; try { sub.textContent = 'Submitted ' + new Date(data.ts).toLocaleString(); } catch(e){} head.appendChild(sub); }
