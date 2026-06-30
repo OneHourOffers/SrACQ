@@ -103,6 +103,33 @@ body{ background:var(--bg); color:var(--text); font-family:"DM Sans",sans-serif;
     if (contact.email) out.push('E-Mail - ' + contact.email.trim());
     return out.join('\n');
   };
+
+  // index every field so each signer's group button can pull its matching email
+  const fieldMap = {};
+  data.fields.forEach(p => { fieldMap[p[0]] = p[1]; });
+  const firstVal = labels => {
+    for (let i = 0; i < labels.length; i++) {
+      if (fieldMap[labels[i]] != null) return [labels[i], fieldMap[labels[i]]];
+    }
+    return null;
+  };
+  // returns the signer number if this label is a signer's Name row, else null
+  const signerNum = label => {
+    if (label === 'Signer Name') return 1;
+    const m = /^Signer\s+(\d+)\s+Name$/.exec(label);
+    return m ? parseInt(m[1], 10) : null;
+  };
+  const signerBlock = n => {
+    const name  = n === 1 ? firstVal(['Signer Name', 'Signer 1 Name'])
+                          : firstVal(['Signer ' + n + ' Name']);
+    const email = n === 1 ? firstVal(['Signing Email', 'Signer 1 Email', 'Signer Email'])
+                          : firstVal(['Signer ' + n + ' Email']);
+    const out = [];
+    if (name)  out.push(name[0]  + ' - ' + String(name[1]).trim());
+    if (email) out.push(email[0] + ' - ' + String(email[1]).trim());
+    return out.join('\n');
+  };
+
   data.fields.forEach(pair => {
     const label = pair[0], value = pair[1];
     if (label === 'POC') contact.poc = value;
@@ -114,6 +141,15 @@ body{ background:var(--bg); color:var(--text); font-family:"DM Sans",sans-serif;
       gb.textContent = 'Copy POC · Phone · E-Mail';
       gb.dataset.label = gb.textContent;
       gb.addEventListener('click', () => copy(contactBlock(), gb));
+      rows.appendChild(gb);
+    }
+    const sn = signerNum(label);
+    if (sn !== null) {
+      const gb = document.createElement('button');
+      gb.className = 'copy-group';
+      gb.textContent = 'Copy Signer ' + sn + ' · Name + Email';
+      gb.dataset.label = gb.textContent;
+      gb.addEventListener('click', () => copy(signerBlock(sn), gb));
       rows.appendChild(gb);
     }
     const row = document.createElement('div'); row.className = 'row';
