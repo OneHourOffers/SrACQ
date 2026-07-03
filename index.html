@@ -739,6 +739,28 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
 .da-acq-btn.on { background:var(--accent); border-color:var(--accent); color:#fff; }
 .da-acq-err { display:none; font-size:11px; color:var(--red); margin-top:-14px; margin-bottom:16px; }
 .da-acq-err.show { display:block; }
+/* COE custom date picker — weekends disabled (title companies can't close weekends) */
+.da-date { position: relative; }
+.da-date-display { cursor: pointer; background: var(--bg); }
+.da-date-display::placeholder { color: var(--text-muted); }
+.da-field.show-err .da-date-display { border-color: var(--coral); box-shadow: 0 0 0 3px var(--coral-dim); }
+.da-cal { position: absolute; top: calc(100% + 6px); left: 0; z-index: 45; width: 288px; max-width: calc(100vw - 40px); background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); box-shadow: 0 12px 30px rgba(30,65,100,0.16); padding: 12px; display: none; }
+.da-cal.show { display: block; }
+.da-cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.da-cal-nav { background: var(--surface2); border: 1px solid var(--border2); color: var(--text-sec); width: 28px; height: 28px; border-radius: 7px; cursor: pointer; font-size: 16px; line-height: 1; display: flex; align-items: center; justify-content: center; transition: background 0.12s, border-color 0.12s, color 0.12s; }
+.da-cal-nav:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+.da-cal-title { font-family: "Archivo", sans-serif; font-size: 13px; font-weight: 700; color: var(--text); }
+.da-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.da-cal-dow { font-size: 10px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: var(--text-muted); text-align: center; padding: 4px 0; }
+.da-cal-dow.we { color: var(--coral); opacity: 0.75; }
+.da-cal-cell { border: none; background: none; font-family: inherit; font-size: 12.5px; color: var(--text); height: 32px; border-radius: 7px; cursor: pointer; padding: 0; transition: background 0.1s, color 0.1s; }
+.da-cal-cell.empty { visibility: hidden; }
+.da-cal-cell:hover:not(.disabled) { background: var(--accent-light); color: var(--accent); }
+.da-cal-cell.disabled { color: var(--text-muted); opacity: 0.32; cursor: not-allowed; text-decoration: line-through; }
+.da-cal-cell.sel { background: var(--accent); color: #fff; font-weight: 700; }
+.da-cal-cell.today:not(.sel) { box-shadow: inset 0 0 0 1px var(--accent-border); }
+.da-cal-note { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--border); font-size: 10.5px; color: var(--text-muted); line-height: 1.45; }
+.da-cal-note b { color: var(--coral); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -1538,6 +1560,14 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
         <input type="hidden" id="da-acq-val" name="acq">
         <input type="hidden" id="da-acq-email" name="acqEmail">
 
+        <div class="da-subhead" style="margin-top:22px;">Jr. ACQ — who Tee'd it up <span style="text-transform:none; letter-spacing:0; font-weight:400; color:var(--text-muted); margin-left:4px;">(optional)</span></div>
+        <div class="da-acq" id="da-jr">
+          <button type="button" class="da-acq-btn" data-jr="Amanda">Amanda</button>
+          <button type="button" class="da-acq-btn" data-jr="Davon">Davon</button>
+          <button type="button" class="da-acq-btn" data-jr="Steven">Steven</button>
+        </div>
+        <input type="hidden" id="da-jr-val" name="jrAcq">
+
         <div class="da-subhead">Signer</div>
         <div class="da-grid">
           <div class="da-field">
@@ -1603,9 +1633,13 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
           </div>
 
           <div class="da-field">
-            <label class="da-label" for="da-coe">COE <span class="req">*</span><span class="da-hint">close of escrow</span></label>
-            <input class="da-input" id="da-coe" name="coe" type="date" autocomplete="off">
-            <div class="da-err-msg">Pick a close-of-escrow date.</div>
+            <label class="da-label" for="da-coe-display">COE <span class="req">*</span><span class="da-hint">close of escrow · weekdays only</span></label>
+            <div class="da-date">
+              <input class="da-input da-date-display" id="da-coe-display" type="text" readonly autocomplete="off" placeholder="Select a weekday…" aria-haspopup="dialog">
+              <input type="hidden" id="da-coe" name="coe">
+              <div class="da-cal" id="da-cal" role="dialog" aria-label="Choose close-of-escrow date" aria-hidden="true"></div>
+            </div>
+            <div class="da-err-msg">Pick a close-of-escrow date (weekday).</div>
           </div>
 
           <div class="da-field full">
@@ -2164,9 +2198,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
   el('da-add-signer').addEventListener('click', addSigner);
 
   // Sending ACQ selector (single-select)
-  document.querySelectorAll('.da-acq-btn').forEach(btn=>{
+  document.querySelectorAll('#da-acq .da-acq-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      document.querySelectorAll('.da-acq-btn').forEach(b=>b.classList.remove('on'));
+      document.querySelectorAll('#da-acq .da-acq-btn').forEach(b=>b.classList.remove('on'));
       btn.classList.add('on');
       el('da-acq-val').value = btn.dataset.acq || '';
       el('da-acq-email').value = btn.dataset.acqEmail || '';
@@ -2174,10 +2208,81 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     });
   });
 
+  // Jr. ACQ "who tee'd it up" selector (single-select, optional — click again to clear)
+  document.querySelectorAll('#da-jr .da-acq-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const already = btn.classList.contains('on');
+      document.querySelectorAll('#da-jr .da-acq-btn').forEach(b=>b.classList.remove('on'));
+      if(already){ el('da-jr-val').value = ''; }
+      else { btn.classList.add('on'); el('da-jr-val').value = btn.dataset.jr || ''; }
+    });
+  });
+
+  /* === COE custom date picker — weekdays only (title companies don't close weekends) === */
+  (function(){
+    const display = el('da-coe-display'), hidden = el('da-coe'), cal = el('da-cal');
+    if(!display || !hidden || !cal) return;
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const today = new Date(); today.setHours(0,0,0,0);
+    let view = new Date(today.getFullYear(), today.getMonth(), 1);
+    let selected = null;
+
+    const iso = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    const pretty = d => DOW[d.getDay()] + ', ' + MONTHS[d.getMonth()].slice(0,3) + ' ' + d.getDate() + ', ' + d.getFullYear();
+    const isWeekend = d => { const g = d.getDay(); return g === 0 || g === 6; };
+
+    function render(){
+      const y = view.getFullYear(), m = view.getMonth();
+      const startDow = new Date(y, m, 1).getDay();
+      const daysInMonth = new Date(y, m+1, 0).getDate();
+      let html = '<div class="da-cal-head">'
+        + '<button type="button" class="da-cal-nav" data-nav="-1" aria-label="Previous month">&#8249;</button>'
+        + '<span class="da-cal-title">' + MONTHS[m] + ' ' + y + '</span>'
+        + '<button type="button" class="da-cal-nav" data-nav="1" aria-label="Next month">&#8250;</button>'
+        + '</div><div class="da-cal-grid">';
+      for(let i=0;i<7;i++){ html += '<div class="da-cal-dow' + ((i===0||i===6)?' we':'') + '">' + DOW[i].slice(0,2) + '</div>'; }
+      for(let i=0;i<startDow;i++){ html += '<button type="button" class="da-cal-cell empty" tabindex="-1" disabled></button>'; }
+      for(let d=1; d<=daysInMonth; d++){
+        const date = new Date(y, m, d), weekend = isWeekend(date), cls = ['da-cal-cell'];
+        if(weekend) cls.push('disabled');
+        if(selected && iso(selected) === iso(date)) cls.push('sel');
+        if(iso(date) === iso(today)) cls.push('today');
+        html += '<button type="button" class="' + cls.join(' ') + '"'
+          + (weekend ? ' disabled aria-disabled="true" title="Title companies can\'t close on weekends"' : ' data-day="' + d + '"')
+          + '>' + d + '</button>';
+      }
+      html += '</div><div class="da-cal-note">Weekends are <b>disabled</b> — title companies can\u2019t close on Saturday or Sunday.</div>';
+      cal.innerHTML = html;
+      cal.querySelectorAll('.da-cal-nav').forEach(b=>{
+        b.addEventListener('click', e=>{ e.stopPropagation(); view = new Date(y, m + (+b.dataset.nav), 1); render(); });
+      });
+      cal.querySelectorAll('.da-cal-cell[data-day]').forEach(b=>{
+        b.addEventListener('click', e=>{
+          e.stopPropagation();
+          selected = new Date(view.getFullYear(), view.getMonth(), +b.dataset.day);
+          hidden.value = iso(selected);
+          display.value = pretty(selected);
+          display.closest('.da-field').classList.remove('show-err');
+          hidden.classList.remove('err');
+          close();
+        });
+      });
+    }
+    function open(){ if(selected){ view = new Date(selected.getFullYear(), selected.getMonth(), 1); } render(); cal.classList.add('show'); cal.setAttribute('aria-hidden','false'); }
+    function close(){ cal.classList.remove('show'); cal.setAttribute('aria-hidden','true'); }
+    function toggle(){ cal.classList.contains('show') ? close() : open(); }
+
+    display.addEventListener('click', e=>{ e.stopPropagation(); toggle(); });
+    display.addEventListener('keydown', e=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); } });
+    document.addEventListener('click', e=>{ if(!cal.contains(e.target) && e.target !== display) close(); });
+    form.addEventListener('reset', ()=>{ selected = null; view = new Date(today.getFullYear(), today.getMonth(), 1); close(); });
+  })();
+
   function validate(){
     let ok=true, firstBad=null;
     const acqErr = document.getElementById('da-acq-err');
-    if(!el('da-acq-val').value){ acqErr.classList.add('show'); ok=false; firstBad = document.querySelector('.da-acq-btn'); }
+    if(!el('da-acq-val').value){ acqErr.classList.add('show'); ok=false; firstBad = document.querySelector('#da-acq .da-acq-btn'); }
     else acqErr.classList.remove('show');
     fields.forEach(f=>{
       const inp = el(f.id), wrap = inp.closest('.da-field'), val = inp.value.trim();
@@ -2211,6 +2316,8 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     const lines = [];
     const acqVal = el('da-acq-val').value, acqEmail = el('da-acq-email').value;
     if(acqVal) lines.push('Sr. ACQ - ' + acqVal + (acqEmail ? ' (' + acqEmail + ')' : ''));
+    const jrVal = el('da-jr-val').value;
+    if(jrVal) lines.push("Jr. ACQ (Tee'd it up) - " + jrVal);
     lines.push('Signer Name - '   + v('da-signer'));
     lines.push('Signing Email - ' + v('da-sign-email'));
     extraWrap.querySelectorAll('.da-signer-block').forEach(block=>{
@@ -2276,6 +2383,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     form.reset();
     document.querySelectorAll('.da-acq-btn').forEach(b=>b.classList.remove('on'));
     el('da-acq-val').value=''; el('da-acq-email').value='';
+    el('da-jr-val').value='';
     document.getElementById('da-acq-err').classList.remove('show');
     emdTouched = false;
     pocTouched = false; emailTouched = false;
