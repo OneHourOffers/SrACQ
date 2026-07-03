@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agreement Intake Form · One Hour Offers</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#f5f3ef; --surface:#ffffff; --border:rgba(30,65,100,0.1); --border2:rgba(30,65,100,0.18);
@@ -13,12 +13,12 @@
   --radius:10px; --radius-lg:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{ background:var(--bg); color:var(--text); font-family:"DM Sans",sans-serif; font-size:14px; line-height:1.6; min-height:100vh; padding:32px 16px; }
+body{ background:var(--bg); color:var(--text); font-family:"Archivo",sans-serif; font-size:14px; line-height:1.6; min-height:100vh; padding:32px 16px; }
 .wrap{ max-width:580px; margin:0 auto; }
 .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); box-shadow:0 1px 6px rgba(30,65,100,0.07); overflow:hidden; }
 .head{ padding:22px 24px; border-bottom:1px solid var(--border); }
 .eyebrow{ font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--logo-teal); margin-bottom:6px; }
-.title{ font-family:"Syne",sans-serif; font-size:22px; font-weight:800; color:var(--text); line-height:1.25; }
+.title{ font-family:"Archivo",sans-serif; font-size:22px; font-weight:800; color:var(--text); line-height:1.25; }
 .sub{ font-size:12px; color:var(--text-muted); margin-top:5px; }
 .head-actions{ margin-top:15px; }
 .copy-all{ background:var(--accent); color:#fff; border:none; border-radius:var(--radius); padding:9px 17px; font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; transition:background 0.12s; }
@@ -155,7 +155,7 @@ body{ background:var(--bg); color:var(--text); font-family:"DM Sans",sans-serif;
     const row = document.createElement('div'); row.className = 'row';
     const main = document.createElement('div'); main.className = 'row-main';
     const l = document.createElement('div'); l.className = 'row-label'; l.textContent = label;
-    if (/^Sr\. ACQ/i.test(label)) l.classList.add('row-label-plain');
+    if (/^(Sr|Jr)\. ACQ/i.test(label)) l.classList.add('row-label-plain');
     const v = document.createElement('div'); v.className = 'row-val'; v.textContent = value;
     main.appendChild(l); main.appendChild(v);
     const btn = document.createElement('button'); btn.className = 'copy-btn'; btn.textContent = 'Copy'; btn.dataset.label = 'Copy';
