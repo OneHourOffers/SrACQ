@@ -1551,7 +1551,14 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
       </div>
 
       <form class="da-form" id="da-form" novalidate>
-        <div class="da-subhead">Sr. ACQ — who's sending this <span class="req">*</span></div>
+        <div class="da-subhead">Deal Type <span class="req">*</span></div>
+        <div class="da-acq" id="da-dealtype">
+          <button type="button" class="da-acq-btn on" data-dealtype="Cash">Cash</button>
+          <button type="button" class="da-acq-btn" data-dealtype="Novation">Novation</button>
+        </div>
+        <input type="hidden" id="da-dealtype-val" name="dealType" value="Cash">
+
+        <div class="da-subhead" style="margin-top:22px;">Sr. ACQ — who's sending this <span class="req">*</span></div>
         <div class="da-acq" id="da-acq">
           <button type="button" class="da-acq-btn" data-acq="Adam Landy" data-acq-email="Adam@1houroffers.com">Adam Landy</button>
           <button type="button" class="da-acq-btn" data-acq="Nathan Myers" data-acq-email="Nathan@1houroffers.com">Nathan Myers</button>
@@ -2197,6 +2204,16 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
   }
   el('da-add-signer').addEventListener('click', addSigner);
 
+  // Deal Type selector (single-select, always one picked — Cash is the default;
+  // this decides which DocuSign template the backend sends from)
+  document.querySelectorAll('#da-dealtype .da-acq-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('#da-dealtype .da-acq-btn').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      el('da-dealtype-val').value = btn.dataset.dealtype || 'Cash';
+    });
+  });
+
   // Sending ACQ selector (single-select)
   document.querySelectorAll('#da-acq .da-acq-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -2314,6 +2331,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
   function buildSummary(){
     const v = id => el(id).value.trim();
     const lines = [];
+    lines.push('Deal Type - ' + (el('da-dealtype-val').value || 'Cash'));
     const acqVal = el('da-acq-val').value, acqEmail = el('da-acq-email').value;
     if(acqVal) lines.push('Sr. ACQ - ' + acqVal + (acqEmail ? ' (' + acqEmail + ')' : ''));
     const jrVal = el('da-jr-val').value;
@@ -2384,6 +2402,8 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     document.querySelectorAll('.da-acq-btn').forEach(b=>b.classList.remove('on'));
     el('da-acq-val').value=''; el('da-acq-email').value='';
     el('da-jr-val').value='';
+    document.querySelectorAll('#da-dealtype .da-acq-btn').forEach(b=>b.classList.toggle('on', b.dataset.dealtype==='Cash'));
+    el('da-dealtype-val').value='Cash';
     document.getElementById('da-acq-err').classList.remove('show');
     emdTouched = false;
     pocTouched = false; emailTouched = false;
