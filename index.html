@@ -778,16 +778,15 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
       <button class="nav-item active" onclick="goSection(this,'schedule')"><span class="nav-dot"></span>Daily schedule<span class="nav-time">9–4pm</span></button>
     </div>
     <div class="nav-section">
+      <div class="nav-section-label">Resources</div>
+      <button class="nav-item" onclick="goSection(this,'draft-agreement')"><span class="nav-dot"></span>Draft Agreement</button>
+      <button class="nav-item" onclick="goSection(this,'tools')"><span class="nav-dot"></span>Quick Links</button>
+    </div>
+    <div class="nav-section">
       <div class="nav-section-label">InvestorFuse CRM</div>
       <button class="nav-item" onclick="goSection(this,'crm')"><span class="nav-dot"></span>How-To Guide</button>
       <button class="nav-item" onclick="goSection(this,'groups')"><span class="nav-dot"></span>Groups</button>
       <button class="nav-item" onclick="goSection(this,'dead')"><span class="nav-dot"></span>Marking as Dead</button>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-label">Resources</div>
-      <button class="nav-item" onclick="goSection(this,'draft-agreement')"><span class="nav-dot"></span>Draft Agreement</button>
-      <button class="nav-item" onclick="goSection(this,'title-companies')"><span class="nav-dot"></span>Title Companies</button>
-      <button class="nav-item" onclick="goSection(this,'tools')"><span class="nav-dot"></span>Quick Links</button>
     </div>
     <div class="nav-section">
       <div class="nav-section-label">Training Material</div>
@@ -1482,19 +1481,24 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
 
       <div class="section-subhead-label" style="margin-top:0">Transaction Tools</div>
       <div class="tools-grid">
-        <a class="tool-card" href="https://onehouroffers.github.io/Closing_Day/" target="_blank" rel="noopener"><div class="tool-name">Guide to Closing Day</div><div class="tool-action">Open &rarr;</div><div class="tool-desc">Step-by-step reference for what happens on closing day.</div></a>
-        <a class="tool-card" href="https://onehouroffers.github.io/Deal_Map/" target="_blank" rel="noopener"><button type="button" class="copy-btn" onclick="copyLink(event, this, 'https://onehouroffers.github.io/Deal_Map/')">Copy link</button><div class="tool-name">Deal Map</div><div class="tool-action">Open &rarr;</div><div class="tool-desc">Visual map of deals we've closed &mdash; settlement statements, HUDs, and proof of closings. Share with sellers as social proof.</div></a>
+        <a class="tool-card" href="https://onehouroffers.github.io/DispoDesk/" target="_blank" rel="noopener"><div class="tool-name">Dispo Desk</div><div class="tool-action">Open &rarr;</div><div class="tool-desc">The disposition desk &mdash; buyer's list, live offers, and the assignment workflow.</div></a>
+        <a class="tool-card" href="https://onehouroffers.github.io/ClosingDay/" target="_blank" rel="noopener"><div class="tool-name">Guide to Closing Day</div><div class="tool-action">Open &rarr;</div><div class="tool-desc">Step-by-step reference for what happens on closing day.</div></a>
+        <a class="tool-card" href="https://onehouroffers.github.io/DealMap/" target="_blank" rel="noopener"><button type="button" class="copy-btn" onclick="copyLink(event, this, 'https://onehouroffers.github.io/DealMap/')">Copy link</button><div class="tool-name">Deal Map</div><div class="tool-action">Open &rarr;</div><div class="tool-desc">Visual map of deals we've closed &mdash; settlement statements, HUDs, and proof of closings. Share with sellers as social proof.</div></a>
+      </div>
+
+      <div class="section-subhead-label">Closings</div>
+      <div class="tools-grid">
+        <a class="tool-card" href="https://onehouroffers.github.io/TitleCompanies/" target="_blank" rel="noopener"><div class="tool-name">Title Companies</div><div class="tool-action">Open &rarr;</div><div class="tool-desc">Vetted title companies and attorneys for closings across the country &mdash; searchable by state, company, or escrow officer.</div></a>
       </div>
 
       <div class="section-subhead-label">Comping</div>
       <div class="tools-grid">
         <a class="tool-card" href="https://app.propstream.com" target="_blank" rel="noopener"><div class="tool-name">PropStream</div><div class="tool-action">Login &rarr;</div><div class="tool-desc">Lead generation, property data, and list building for acquisitions.</div></a>
-        <a class="tool-card" href="https://app.propelio.com" target="_blank" rel="noopener"><div class="tool-name">Propelio</div><div class="tool-action">Login &rarr;</div><div class="tool-desc">Property research, comps, and motivated seller data.</div></a>
       </div>
 
       <div class="section-subhead-label">Offer Analysis</div>
       <div class="tools-grid">
-        <a class="tool-card" href="https://onehouroffers.github.io/Trap_Calc/" target="_blank" rel="noopener"><div class="tool-name">Trap Calc</div><div class="tool-action">Open &rarr;</div><div class="tool-desc">Deal analysis and offer calculator for wholesale real estate.</div></a>
+        <a class="tool-card" href="https://onehouroffers.github.io/TrapCalc/" target="_blank" rel="noopener"><div class="tool-name">Trap Calc</div><div class="tool-action">Open &rarr;</div><div class="tool-desc">Deal analysis and offer calculator for wholesale real estate.</div></a>
       </div>
     </div>
 
