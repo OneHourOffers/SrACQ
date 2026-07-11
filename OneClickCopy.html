@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agreement Intake Form · One Hour Offers</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f3ef; --surface:#ffffff; --border:rgba(30,65,100,0.1); --border2:rgba(30,65,100,0.18);
+  --text:#1a2a3a; --text-sec:#4a5a6a; --text-muted:#8a9aaa;
+  --accent:#1e4164; --accent-light:#e8f0f8; --logo-teal:#1d6b8a; --coral:#f38a81;
+  --radius:10px; --radius-lg:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{ background:var(--bg); color:var(--text); font-family:"Archivo",sans-serif; font-size:14px; line-height:1.6; min-height:100vh; padding:32px 16px; }
+.wrap{ max-width:580px; margin:0 auto; }
+.card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); box-shadow:0 1px 6px rgba(30,65,100,0.07); overflow:hidden; }
+.head{ padding:22px 24px; border-bottom:1px solid var(--border); }
+.eyebrow{ font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--logo-teal); margin-bottom:6px; }
+.title{ font-family:"Archivo",sans-serif; font-size:22px; font-weight:800; color:var(--text); line-height:1.25; }
+.sub{ font-size:12px; color:var(--text-muted); margin-top:5px; }
+.head-actions{ margin-top:15px; }
+.copy-all{ background:var(--accent); color:#fff; border:none; border-radius:var(--radius); padding:9px 17px; font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; transition:background 0.12s; }
+.copy-all:hover{ background:#15324e; }
+.row{ display:flex; align-items:flex-start; gap:14px; padding:13px 24px; border-bottom:1px solid var(--border); }
+.row:last-child{ border-bottom:none; }
+.row-main{ flex:1; min-width:0; }
+.row-label{ font-size:11px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px; }
+.row-label-plain{ text-transform:none; letter-spacing:0; }
+.row-val{ font-size:14px; color:var(--text); word-break:break-word; white-space:pre-wrap; }
+.copy-btn{ flex-shrink:0; background:var(--accent-light); color:var(--accent); border:none; border-radius:8px; padding:7px 14px; font-family:inherit; font-size:11.5px; font-weight:600; cursor:pointer; transition:background 0.12s,color 0.12s; min-width:78px; }
+.copy-btn:hover{ background:var(--logo-teal); color:#fff; }
+.copy-btn.done{ background:var(--logo-teal); color:#fff; }
+.copy-group{ display:block; margin:12px 24px 2px; background:var(--accent-light); color:var(--accent); border:1px dashed var(--border2); border-radius:8px; padding:9px 12px; font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; text-align:center; transition:background 0.12s,color 0.12s,border-color 0.12s; }
+.copy-group:hover{ background:var(--logo-teal); color:#fff; border-color:transparent; }
+.copy-group.done{ background:var(--logo-teal); color:#fff; border-color:transparent; }
+.empty{ padding:44px 24px; text-align:center; color:var(--text-muted); font-size:13px; line-height:1.7; }
+.foot{ text-align:center; font-size:11px; color:var(--text-muted); margin-top:16px; letter-spacing:0.04em; }
+@media (max-width:520px){ .row{ flex-wrap:wrap; } .copy-btn{ width:100%; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" id="card"><div class="empty">Loading deal…</div></div>
+  <div class="foot">ONE HOUR OFFERS · AGREEMENT INTAKE FORM</div>
+</div>
+<script>
+(function(){
+  function b64utf8(s){
+    s = s.replace(/-/g,'+').replace(/_/g,'/');
+    const bin = atob(s);
+    const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+
+  let data = null;
+  try {
+    const h = location.hash.replace(/^#/, '');
+    if (h) data = JSON.parse(b64utf8(h));
+  } catch (e) { data = null; }
+
+  const card = document.getElementById('card');
+  if (!data || !Array.isArray(data.fields) || !data.fields.length) {
+    card.innerHTML = '<div class="empty">No deal data found in this link.<br>Open it straight from the intake email at transactions@1houroffers.com.</div>';
+    return;
+  }
+
+  function copy(text, btn){
+    const flash = () => { const o = btn.dataset.label; btn.textContent = 'Copied ✓'; btn.classList.add('done'); setTimeout(()=>{ btn.textContent = o; btn.classList.remove('done'); }, 1300); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(flash).catch(()=>legacy(text, flash));
+    } else { legacy(text, flash); }
+  }
+  function legacy(text, flash){
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); flash(); } catch(e){}
+    document.body.removeChild(ta);
+  }
+
+  card.innerHTML = '';
+
+  const head = document.createElement('div'); head.className = 'head';
+  const eb = document.createElement('div'); eb.className = 'eyebrow'; eb.textContent = 'Agreement Intake Form';
+  const ti = document.createElement('div'); ti.className = 'title'; ti.textContent = data.addr || 'Draft Agreement';
+  head.appendChild(eb); head.appendChild(ti);
+  if (data.ts) { const sub = document.createElement('div'); sub.className = 'sub'; try { sub.textContent = 'Submitted ' + new Date(data.ts).toLocaleString(); } catch(e){} head.appendChild(sub); }
+  const ha = document.createElement('div'); ha.className = 'head-actions';
+  const allBtn = document.createElement('button'); allBtn.className = 'copy-all'; allBtn.textContent = 'Copy all fields';
+  allBtn.dataset.label = 'Copy all fields';
+  allBtn.addEventListener('click', () => copy(data.fields.map(f => f[0] + ': ' + f[1]).join('\n'), allBtn));
+  ha.appendChild(allBtn); head.appendChild(ha);
+  card.appendChild(head);
+
+  const rows = document.createElement('div');
+  const contact = { poc:'', phone:'', email:'' };
+  const contactBlock = () => {
+    const out = [];
+    if (contact.poc)   out.push('P.O.C - '  + contact.poc.trim());
+    if (contact.phone) out.push('Phone - '  + contact.phone.trim());
+    if (contact.email) out.push('E-Mail - ' + contact.email.trim());
+    return out.join('\n');
+  };
+
+  // index every field so each signer's group button can pull its matching email
+  const fieldMap = {};
+  data.fields.forEach(p => { fieldMap[p[0]] = p[1]; });
+  const firstVal = labels => {
+    for (let i = 0; i < labels.length; i++) {
+      if (fieldMap[labels[i]] != null) return [labels[i], fieldMap[labels[i]]];
+    }
+    return null;
+  };
+  // returns the signer number if this label is a signer's Name row, else null
+  const signerNum = label => {
+    if (label === 'Signer Name') return 1;
+    const m = /^Signer\s+(\d+)\s+Name$/.exec(label);
+    return m ? parseInt(m[1], 10) : null;
+  };
+  const signerBlock = n => {
+    const name  = n === 1 ? firstVal(['Signer Name', 'Signer 1 Name'])
+                          : firstVal(['Signer ' + n + ' Name']);
+    const email = n === 1 ? firstVal(['Signing Email', 'Signer 1 Email', 'Signer Email'])
+                          : firstVal(['Signer ' + n + ' Email']);
+    const out = [];
+    if (name)  out.push(name[0]  + ' - ' + String(name[1]).trim());
+    if (email) out.push(email[0] + ' - ' + String(email[1]).trim());
+    return out.join('\n');
+  };
+
+  data.fields.forEach(pair => {
+    const label = pair[0], value = pair[1];
+    if (label === 'POC') contact.poc = value;
+    else if (label === 'Phone') contact.phone = value;
+    else if (label === 'E-Mail') contact.email = value;
+    if (label === 'POC') {
+      const gb = document.createElement('button');
+      gb.className = 'copy-group';
+      gb.textContent = 'Copy POC · Phone · E-Mail';
+      gb.dataset.label = gb.textContent;
+      gb.addEventListener('click', () => copy(contactBlock(), gb));
+      rows.appendChild(gb);
+    }
+    const sn = signerNum(label);
+    if (sn !== null) {
+      const gb = document.createElement('button');
+      gb.className = 'copy-group';
+      gb.textContent = 'Copy Signer ' + sn + ' · Name + Email';
+      gb.dataset.label = gb.textContent;
+      gb.addEventListener('click', () => copy(signerBlock(sn), gb));
+      rows.appendChild(gb);
+    }
+    const row = document.createElement('div'); row.className = 'row';
+    const main = document.createElement('div'); main.className = 'row-main';
+    const l = document.createElement('div'); l.className = 'row-label'; l.textContent = label;
+    if (/^(Sr|Jr)\. ACQ/i.test(label)) l.classList.add('row-label-plain');
+    const v = document.createElement('div'); v.className = 'row-val'; v.textContent = value;
+    main.appendChild(l); main.appendChild(v);
+    const btn = document.createElement('button'); btn.className = 'copy-btn'; btn.textContent = 'Copy'; btn.dataset.label = 'Copy';
+    btn.addEventListener('click', () => copy(value, btn));
+    row.appendChild(main); row.appendChild(btn);
+    rows.appendChild(row);
+  });
+  card.appendChild(rows);
+})();
+</script>
+</body>
+</html>
