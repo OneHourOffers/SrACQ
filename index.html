@@ -1689,6 +1689,7 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
         </div>
 
         <input type="hidden" id="da-summary-field" name="_summary">
+        <input type="hidden" id="da-handoff-field" name="_handoffUrl">
 
         <div class="da-actions">
           <button type="submit" class="da-submit" id="da-submit">Send to TC &rarr;</button>
@@ -2361,6 +2362,52 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     return lines.join('\n');
   }
 
+  // UTF-8 safe base64url (matches the b64utf8 decoder in handoff.html — url-safe chars, padding kept)
+  function b64urlEncode(str){
+    return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_');
+  }
+  // Mirror the server's apnHash_ / fmtDate_ so the handoff shows the same formatting.
+  function apnHash(v){ v = String(v||'').trim(); if(!v) return v; return /^#/.test(v) ? v : '#' + v; }
+  function fmtHandoffDate(ymd){
+    if(!ymd) return ymd;
+    const m = String(ymd).match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    return m ? (parseInt(m[2],10) + '/' + parseInt(m[3],10) + '/' + m[1]) : ymd;
+  }
+
+  // Build the one-click copy handoff link, RELATIVE to wherever this form is hosted
+  // (so a repo rename can never break it). Field construction mirrors the server's
+  // buildHandoffLink_ exactly, and supports any number of extra signers.
+  function buildHandoffUrl(){
+    const v = id => el(id).value.trim();
+    const pairs = [];
+    const add = (label, val) => { if(val && String(val).trim() !== '') pairs.push([label, String(val)]); };
+    const acqVal = el('da-acq-val').value, acqEmail = el('da-acq-email').value;
+    if(acqVal && acqEmail) add('Sr. ACQ - ' + acqVal, acqEmail);
+    else if(acqVal) add('Sr. ACQ', acqVal);
+    add('Jr. ACQ', el('da-jr-val').value);
+    add('Deal Type', el('da-dealtype-val').value || 'Cash');
+    add('Signer Name', v('da-signer'));
+    add('Signing Email', v('da-sign-email'));
+    extraWrap.querySelectorAll('.da-signer-block').forEach(block=>{
+      const n = block.dataset.n;
+      add('Signer ' + n + ' Name',  block.querySelector('.da-extra-name').value.trim());
+      add('Signer ' + n + ' Email', block.querySelector('.da-extra-email').value.trim());
+    });
+    add('Name on Deed', v('da-deed'));
+    add('Purchase Price', v('da-price') ? '$' + v('da-price') : '');
+    add('EMD',            v('da-emd')   ? '$' + v('da-emd')   : '');
+    add('Address', v('da-address'));
+    add('APN', apnHash(v('da-apn')));
+    add('COE', fmtHandoffDate(v('da-coe')));
+    add('Additional Terms', v('da-notes'));
+    add('POC', v('da-poc'));
+    add('Phone', v('da-phone'));
+    add('E-Mail', v('da-email'));
+    const payload = JSON.stringify({ addr: v('da-address'), ts: new Date().toISOString(), fields: pairs });
+    const base = location.href.split('#')[0].replace(/[^/]*$/, '') + 'handoff.html';
+    return base + '#' + b64urlEncode(payload);
+  }
+
   let submitted = false;
   el('da-sink').addEventListener('load', ()=>{ if(submitted) showSuccess(true); });
 
@@ -2380,6 +2427,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     if(!validate()){ el('da-status').textContent = 'Check the highlighted fields.'; return; }
     el('da-status').textContent = '';
     el('da-summary-field').value = buildSummary();
+    el('da-handoff-field').value = buildHandoffUrl();
     if(SCRIPT_URL){
       el('da-submit').disabled = true;
       el('da-submit').textContent = 'Sending…';
