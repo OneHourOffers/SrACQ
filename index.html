@@ -2632,7 +2632,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     return lines.join('\n');
   }
 
-  // UTF-8 safe base64url (matches the b64utf8 decoder in handoff.html — url-safe chars, padding kept)
+  // UTF-8 safe base64url (matches the b64utf8 decoder in OneClickCopy.html — url-safe chars, padding kept)
   function b64urlEncode(str){
     return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_');
   }
@@ -2674,7 +2674,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     add('Phone', v('da-phone'));
     add('E-Mail', v('da-email'));
     const payload = JSON.stringify({ addr: v('da-address'), ts: new Date().toISOString(), fields: pairs });
-    const base = location.href.split('#')[0].replace(/[^/]*$/, '') + 'handoff.html';
+    const base = location.href.split('#')[0].replace(/[^/]*$/, '') + 'OneClickCopy.html';
     return base + '#' + b64urlEncode(payload);
   }
 
@@ -3130,7 +3130,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     add('Address', v('ad-address'));
     add('Additional Terms', v('ad-notes'));
     const payload = JSON.stringify({ addr: v('ad-address'), ts: new Date().toISOString(), fields: pairs });
-    const base = location.href.split('#')[0].replace(/[^/]*$/, '') + 'handoff.html';
+    const base = location.href.split('#')[0].replace(/[^/]*$/, '') + 'OneClickCopy.html';
     return base + '#' + b64urlEncode(payload);
   }
 
