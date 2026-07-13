@@ -791,6 +791,7 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
       <div class="nav-section-label">Resources</div>
       <button class="nav-item" onclick="goSection(this,'draft-agreement')"><span class="nav-dot"></span>Draft Agreement</button>
       <button class="nav-item" onclick="goSection(this,'draft-addendum')"><span class="nav-dot"></span>Draft Addendum</button>
+      <button class="nav-item" onclick="goSection(this,'draft-cancellation')"><span class="nav-dot"></span>Draft Cancellation</button>
       <button class="nav-item" onclick="goSection(this,'tools')"><span class="nav-dot"></span>Quick Links</button>
     </div>
     <div class="nav-section">
@@ -1881,6 +1882,102 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
       <iframe name="ad-sink" id="ad-sink" style="display:none" title="submission target"></iframe>
     </div>
 
+    <div id="section-draft-cancellation" class="section">
+      <div class="section-header">
+        <div class="section-eyebrow">Resources</div>
+        <div class="section-title">Draft Cancellation</div>
+        <div class="section-sub">Need to cancel a signed deal? Pick it from the list and hit <strong style="color:var(--text);font-weight:500;">Send to TC</strong>. DocuSign preps the Cancellation for signing &mdash; no additional terms needed.</div>
+      </div>
+
+      <div class="da-intro">
+        <div class="da-intro-icon">📝</div>
+        <div class="da-intro-list">
+          <div>Cancellation will be drafted and sent to you via <strong>DocuSign</strong>.</div>
+          <div>You will <strong>ALWAYS sign as TIMMY LE</strong>. Once you sign and complete, the seller will receive the Cancellation.</div>
+          <div><strong style="color:var(--coral)">*MUST HAVE SELLER ON THE PHONE*</strong></div>
+          <div>If the cancellation is viewed by the seller and not completed within <strong>30 minutes</strong>, it will be <strong style="color:var(--coral)">VOIDED</strong>.</div>
+        </div>
+      </div>
+
+      <form class="da-form" id="dc-form" novalidate>
+        <div class="da-subhead">Sr. ACQ — who's sending this <span class="req">*</span></div>
+        <div class="da-acq" id="dc-acq">
+          <button type="button" class="da-acq-btn" data-acq="Adam Landy" data-acq-email="Adam@1houroffers.com">Adam Landy</button>
+          <button type="button" class="da-acq-btn" data-acq="Nathan Myers" data-acq-email="Nathan@1houroffers.com">Nathan Myers</button>
+        </div>
+        <div class="da-acq-err" id="dc-acq-err">Pick who's sending this cancellation.</div>
+        <input type="hidden" id="dc-acq-val" name="acq">
+        <input type="hidden" id="dc-acq-email" name="acqEmail">
+
+        <div class="da-grid" style="margin-top:22px;">
+          <div class="da-field full">
+            <label class="da-label" for="dc-address">Address <span class="req">*</span><span class="da-hint"><a href="https://onehouroffers.github.io/DealTracker/" target="_blank" rel="noopener" style="color:var(--logo-teal);text-decoration:underline;">Check Deal Tracker Site</a> if needed</span></label>
+            <div class="da-ac">
+              <input class="da-input" id="dc-address" name="address" type="text" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" placeholder="Pick a deal under contract — or type an address…">
+              <div class="da-ac-list" id="dc-ac-list" role="listbox"></div>
+            </div>
+            <div class="da-err-msg">Enter the property address.</div>
+          </div>
+
+          <div class="da-field full">
+            <label class="da-label" for="dc-deed">Name on Deed <span class="req">*</span></label>
+            <input class="da-input" id="dc-deed" name="nameOnDeed" type="text" autocomplete="off" placeholder="Exactly as it reads on title">
+            <div class="da-err-msg">Enter the name on the deed.</div>
+          </div>
+
+          <div class="da-field">
+            <label class="da-label" for="dc-signer">Signer Name <span class="req">*</span></label>
+            <input class="da-input" id="dc-signer" name="signer" type="text" autocomplete="off" placeholder="Full legal name of who's signing">
+            <div class="da-err-msg">Enter the signer's name.</div>
+          </div>
+
+          <div class="da-field">
+            <label class="da-label" for="dc-sign-email">Signing Email <span class="req">*</span></label>
+            <input class="da-input" id="dc-sign-email" name="signingEmail" type="email" autocomplete="off" placeholder="signer@email.com">
+            <div class="da-err-msg">Enter a valid signing email.</div>
+          </div>
+
+          <div class="da-signers-extra" id="dc-signers-extra"></div>
+
+          <div class="da-add-row">
+            <button type="button" class="da-add-signer" id="dc-add-signer">+ Add another signer</button>
+          </div>
+
+          <div class="da-field full">
+            <label class="da-label" for="dc-contractdate-display">Contract Signed <span class="req">*</span><span class="da-hint">date the original purchase agreement was signed</span></label>
+            <div class="da-date">
+              <input class="da-input da-date-display" id="dc-contractdate-display" type="text" readonly autocomplete="off" placeholder="Pick the contract date…" aria-haspopup="dialog">
+              <input type="hidden" id="dc-contractdate" name="contractDate">
+              <div class="da-cal" id="dc-contractdate-cal" role="dialog" aria-hidden="true"></div>
+            </div>
+            <div class="da-err-msg">Pick the contract date.</div>
+          </div>
+        </div>
+
+        <input type="hidden" name="docType" value="Cancellation">
+        <input type="hidden" id="dc-summary-field" name="_summary">
+
+        <div class="da-actions">
+          <button type="submit" class="da-submit" id="dc-submit">Send to TC &rarr;</button>
+          <button type="button" class="da-reset" id="dc-reset">Clear form</button>
+          <span class="da-status" id="dc-status"></span>
+        </div>
+      </form>
+
+      <div class="da-success" id="dc-success">
+        <div class="da-success-badge">✓ <span id="dc-success-text">Sent to TC</span></div>
+        <div style="font-size:13px;color:var(--text-sec);margin-bottom:14px;">Here's exactly what went over, in DocuSign field order:</div>
+        <div class="da-summary" id="dc-summary"></div>
+        <div class="da-copy-row">
+          <button type="button" class="da-copy-btn" id="dc-copy">Copy details</button>
+          <button type="button" class="da-again" id="dc-again">Submit another</button>
+        </div>
+        <div class="da-note" id="dc-note"></div>
+      </div>
+
+      <iframe name="dc-sink" id="dc-sink" style="display:none" title="submission target"></iframe>
+    </div>
+
   </main>
 </div>
 
@@ -1928,7 +2025,7 @@ function goDay(btn, n) {
   document.querySelectorAll('.day-tab').forEach(b => b.classList.remove('on'));
   document.getElementById('day' + n).classList.add('on');
   btn.classList.add('on');
-  ['schedule','crm','groups','dead','tools','draft-agreement','draft-addendum'].forEach(s => {
+  ['schedule','crm','groups','dead','tools','draft-agreement','draft-addendum','draft-cancellation'].forEach(s => {
     document.getElementById('section-' + s).classList.remove('active');
   });
   document.getElementById('section-training').classList.add('active');
@@ -3237,6 +3334,304 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
   }
   el('ad-again').addEventListener('click', resetForm);
   el('ad-reset').addEventListener('click', resetForm);
+})();
+</script>
+<script>
+/* ===================== DRAFT CANCELLATION =====================
+   Twin of the Draft Addendum: same deal-tracker Address dropdown +
+   auto-fill (Name on Deed / Signer 1-2 from the deal's note). No
+   additional terms — just a Contract Date. Posts to its OWN standalone
+   Apps Script (cancellation template). ============================ */
+(function(){
+  const SCRIPT_URL = "";   // <-- paste the CANCELLATION project's Web App URL
+
+  const form = document.getElementById('dc-form');
+  if(!form) return;
+  const el = id => document.getElementById(id);
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const fields = [
+    {id:'dc-address',      key:'Address',       req:true},
+    {id:'dc-deed',         key:'Name on Deed',  req:true},
+    {id:'dc-signer',       key:'Signer Name',   req:true},
+    {id:'dc-sign-email',   key:'Signing Email', req:true, email:true},
+    {id:'dc-contractdate', key:'Contract Date', req:true}
+  ];
+
+  /* === Address = under-contract deal picker (from the deal tracker) === */
+  const addrEl = el('dc-address'), acList = el('dc-ac-list');
+  let acItems = [], acActive = -1, DEALS = [];
+  function acClose(){ acList.classList.remove('show'); acList.innerHTML=''; acItems=[]; acActive=-1; addrEl.setAttribute('aria-expanded','false'); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function acRender(rows){
+    acItems = rows; acActive = -1;
+    if(!rows.length){ acClose(); return; }
+    acList.innerHTML = rows.map((r,i)=>
+      '<div class="da-ac-item" role="option" data-i="'+i+'">'+r.main+
+      (r.sub ? '<span class="da-ac-sub">'+r.sub+'</span>' : '')+'</div>'
+    ).join('');
+    acList.classList.add('show'); addrEl.setAttribute('aria-expanded','true');
+    acList.querySelectorAll('.da-ac-item').forEach(node=>{
+      node.addEventListener('mousedown', e=>{ e.preventDefault(); acChoose(+node.dataset.i); });
+    });
+  }
+  function dealSub(d){
+    const dash = '—';
+    const yes = '<span style="color:#2e9e5b;font-weight:700">✓</span>';
+    const no  = '<span style="color:var(--coral);font-weight:700">✗</span>';
+    const rows = [
+      'Seller On Deed - ' + (d.nameOnDeed ? esc(d.nameOnDeed) : dash),
+      'Signer - '         + (d.signer     ? esc(d.signer)     : dash),
+      'Email ' + (d.signingEmail ? yes : no)
+    ];
+    if(d.signer2 || d.signer2Email){
+      rows.push('Signer 2 - ' + (d.signer2 ? esc(d.signer2) : dash));
+      rows.push('Email ' + (d.signer2Email ? yes : no));
+    }
+    return rows.join('<br>');
+  }
+  function dealRows(q){
+    const ql = (q||'').toLowerCase();
+    return DEALS
+      .filter(d => { const a=(d.address||'').toLowerCase(), n=(d.nameOnDeed||'').toLowerCase(), s=(d.signer||'').toLowerCase(); return !ql || a.includes(ql) || n.includes(ql) || s.includes(ql); })
+      .slice(0, 100)
+      .map(d => ({ main: esc(d.address), sub: dealSub(d), full: d.address, deal: d }));
+  }
+  function showList(q){ acRender(dealRows(q)); }
+  function clearErr(id){ const inp = el(id); if(!inp) return; inp.classList.remove('err'); const f = inp.closest('.da-field'); if(f) f.classList.remove('show-err'); }
+  function fillFromDeal(d){
+    if(!d) return;
+    if(d.nameOnDeed){ el('dc-deed').value = d.nameOnDeed; clearErr('dc-deed'); }
+    if(d.signer){ el('dc-signer').value = d.signer; clearErr('dc-signer'); }
+    if(d.signingEmail){ el('dc-sign-email').value = d.signingEmail; clearErr('dc-sign-email'); }
+    if(d.contractDate) cdCal.set(d.contractDate);
+    extraWrap.innerHTML = '';
+    if(d.signer2 && d.signer2Email){
+      addSigner();
+      const block = extraWrap.querySelector('.da-signer-block:last-child');
+      if(block){ block.querySelector('.da-extra-name').value = d.signer2; block.querySelector('.da-extra-email').value = d.signer2Email; }
+    }
+  }
+  function acChoose(i){
+    const r = acItems[i]; if(!r) return;
+    addrEl.value = r.full; clearErr('dc-address'); acClose(); fillFromDeal(r.deal);
+  }
+  addrEl.addEventListener('focus', ()=> showList(''));
+  addrEl.addEventListener('click', ()=> showList(''));
+  addrEl.addEventListener('input', ()=> showList(addrEl.value.trim()));
+  addrEl.addEventListener('keydown', e=>{
+    if(!acList.classList.contains('show')) return;
+    const items = acList.querySelectorAll('.da-ac-item');
+    if(e.key==='ArrowDown'){ e.preventDefault(); acActive=Math.min(acActive+1, items.length-1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); acActive=Math.max(acActive-1, 0); }
+    else if(e.key==='Enter'){ e.preventDefault(); acChoose(acActive>=0?acActive:0); return; }
+    else if(e.key==='Escape'){ acClose(); return; }
+    else return;
+    items.forEach((n,idx)=>n.classList.toggle('active', idx===acActive));
+    if(items[acActive]) items[acActive].scrollIntoView({block:'nearest'});
+  });
+  addrEl.addEventListener('blur', ()=>{ setTimeout(acClose, 150); });
+  function streetKey(address){
+    var s = String(address||'').split(',')[0].trim();
+    s = s.replace(/^\s*\d+[a-z]?(-\d+)?\s+/i, '');
+    s = s.replace(/^(n|s|e|w|ne|nw|se|sw|north|south|east|west|northeast|northwest|southeast|southwest)\.?\s+/i, '');
+    return s.toLowerCase();
+  }
+  window.__ohoCancelDeals = function(list){
+    if(Array.isArray(list)) DEALS = list.slice().sort(function(a,b){ return streetKey(a.address).localeCompare(streetKey(b.address)); });
+    if(document.activeElement === addrEl) showList('');
+  };
+  (function loadDeals(){
+    if(!SCRIPT_URL) return;
+    const s = document.createElement('script');
+    s.src = SCRIPT_URL + '?list=deals&callback=__ohoCancelDeals';
+    s.async = true;
+    s.onerror = function(){ if(s.parentNode) s.parentNode.removeChild(s); };
+    document.head.appendChild(s);
+  })();
+
+  /* === Contract Date picker === */
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  function ordinal(n){ const s = ['th','st','nd','rd'], v = n % 100; return n + (s[(v-20)%10] || s[v] || s[0]); }
+  function fmtLong(isoStr){ const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(isoStr||''); if(!m) return ''; return MONTHS[+m[2]-1] + ' ' + ordinal(+m[3]) + ', ' + m[1]; }
+  const cdCal = (function(){
+    const displayEl = el('dc-contractdate-display'), calEl = el('dc-contractdate-cal');
+    const today = new Date(); today.setHours(0,0,0,0);
+    let view = new Date(today.getFullYear(), today.getMonth(), 1);
+    let selected = null;
+    const iso = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    function close(){ calEl.classList.remove('show'); calEl.setAttribute('aria-hidden','true'); }
+    function render(){
+      const y = view.getFullYear(), m = view.getMonth();
+      const startDow = new Date(y,m,1).getDay(), dim = new Date(y,m+1,0).getDate();
+      let html = '<div class="da-cal-head"><button type="button" class="da-cal-nav" data-nav="-1" aria-label="Previous month">&#8249;</button><span class="da-cal-title">' + MONTHS[m] + ' ' + y + '</span><button type="button" class="da-cal-nav" data-nav="1" aria-label="Next month">&#8250;</button></div><div class="da-cal-grid">';
+      for(let i=0;i<7;i++){ html += '<div class="da-cal-dow' + ((i===0||i===6)?' we':'') + '">' + DOW[i].slice(0,2) + '</div>'; }
+      for(let i=0;i<startDow;i++){ html += '<button type="button" class="da-cal-cell empty" tabindex="-1" disabled></button>'; }
+      for(let d=1; d<=dim; d++){
+        const date = new Date(y,m,d), cls = ['da-cal-cell'];
+        if(selected && iso(selected)===iso(date)) cls.push('sel');
+        if(iso(date)===iso(today)) cls.push('today');
+        html += '<button type="button" class="' + cls.join(' ') + '" data-day="' + d + '">' + d + '</button>';
+      }
+      html += '</div>';
+      calEl.innerHTML = html;
+      calEl.querySelectorAll('.da-cal-nav').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); view = new Date(y, m + (+b.dataset.nav), 1); render(); }));
+      calEl.querySelectorAll('.da-cal-cell[data-day]').forEach(b => b.addEventListener('click', e => {
+        e.stopPropagation();
+        selected = new Date(view.getFullYear(), view.getMonth(), +b.dataset.day);
+        displayEl.value = fmtLong(iso(selected));
+        el('dc-contractdate').value = iso(selected);
+        clearErr('dc-contractdate');
+        close();
+      }));
+    }
+    function open(){ if(selected){ view = new Date(selected.getFullYear(), selected.getMonth(), 1); } render(); calEl.classList.add('show'); calEl.setAttribute('aria-hidden','false'); }
+    displayEl.addEventListener('click', e => { e.stopPropagation(); calEl.classList.contains('show') ? close() : open(); });
+    document.addEventListener('click', e => { if(!calEl.contains(e.target) && e.target !== displayEl) close(); });
+    return {
+      reset(){ selected = null; displayEl.value = ''; el('dc-contractdate').value = ''; close(); },
+      set(val){
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(val||'');
+        if(m){ selected = new Date(+m[1], +m[2]-1, +m[3]); displayEl.value = fmtLong(val); el('dc-contractdate').value = val; }
+        else if(val){ selected = null; displayEl.value = String(val); el('dc-contractdate').value = String(val); }
+        clearErr('dc-contractdate');
+      }
+    };
+  })();
+
+  /* === additional signers === */
+  const extraWrap = el('dc-signers-extra');
+  function renumberSigners(){
+    extraWrap.querySelectorAll('.da-signer-block').forEach((block, i)=>{
+      const n = i + 2;
+      block.dataset.n = n;
+      block.querySelector('.da-signer-block-title').textContent = 'Signer ' + n;
+      block.querySelector('.da-extra-name').name = 'signer' + n;
+      block.querySelector('.da-extra-email').name = 'signer' + n + 'Email';
+      block.querySelector('.da-extra-name-label').innerHTML = 'Signer ' + n + ' Name <span class="req">*</span>';
+      block.querySelector('.da-extra-email-label').innerHTML = 'Signer ' + n + ' Email <span class="req">*</span>';
+    });
+  }
+  function addSigner(){
+    const block = document.createElement('div');
+    block.className = 'da-signer-block';
+    block.innerHTML =
+      '<div class="da-signer-block-head"><span class="da-signer-block-title">Signer</span>' +
+        '<button type="button" class="da-remove-signer">Remove</button></div>' +
+      '<div class="da-signer-block-grid">' +
+        '<div class="da-field"><label class="da-label da-extra-name-label">Signer Name <span class="req">*</span></label>' +
+          '<input class="da-input da-extra-name" type="text" autocomplete="off" placeholder="Full legal name"><div class="da-err-msg">Enter the signer\'s name.</div></div>' +
+        '<div class="da-field"><label class="da-label da-extra-email-label">Signer Email <span class="req">*</span></label>' +
+          '<input class="da-input da-extra-email" type="email" autocomplete="off" placeholder="signer@email.com"><div class="da-err-msg">Enter a valid signing email.</div></div>' +
+      '</div>';
+    block.querySelector('.da-remove-signer').addEventListener('click', ()=>{ block.remove(); renumberSigners(); });
+    extraWrap.appendChild(block);
+    renumberSigners();
+    block.querySelector('.da-extra-name').focus();
+  }
+  el('dc-add-signer').addEventListener('click', addSigner);
+
+  /* === Sr. ACQ selector === */
+  form.querySelectorAll('#dc-acq .da-acq-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      form.querySelectorAll('#dc-acq .da-acq-btn').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      el('dc-acq-val').value = btn.dataset.acq || '';
+      el('dc-acq-email').value = btn.dataset.acqEmail || '';
+      el('dc-acq-err').classList.remove('show');
+    });
+  });
+
+  function validate(){
+    let ok=true, firstBad=null;
+    const acqErr = el('dc-acq-err');
+    if(!el('dc-acq-val').value){ acqErr.classList.add('show'); ok=false; firstBad = form.querySelector('#dc-acq .da-acq-btn'); }
+    else acqErr.classList.remove('show');
+    fields.forEach(f=>{
+      const inp = el(f.id), wrap = inp.closest('.da-field'), val = inp.value.trim();
+      let bad = false;
+      if(f.req && !val) bad = true;
+      if(!bad && f.email && val && !emailRe.test(val)) bad = true;
+      wrap.classList.toggle('show-err', bad);
+      inp.classList.toggle('err', bad);
+      if(bad && !firstBad) firstBad = inp;
+      if(bad) ok = false;
+    });
+    extraWrap.querySelectorAll('.da-signer-block').forEach(block=>{
+      [[block.querySelector('.da-extra-name'),false],[block.querySelector('.da-extra-email'),true]].forEach(pair=>{
+        const inp = pair[0], wrap = inp.closest('.da-field'), v = inp.value.trim();
+        const bad = !v || (pair[1] && !emailRe.test(v));
+        wrap.classList.toggle('show-err', bad);
+        inp.classList.toggle('err', bad);
+        if(bad && !firstBad) firstBad = inp;
+        if(bad) ok = false;
+      });
+    });
+    if(firstBad && firstBad.focus) firstBad.focus();
+    return ok;
+  }
+  function buildSummary(){
+    const v = id => el(id).value.trim();
+    const lines = [];
+    lines.push('Cancellation - Seller');
+    const acqVal = el('dc-acq-val').value, acqEmail = el('dc-acq-email').value;
+    if(acqVal) lines.push('Sr. ACQ - ' + acqVal + (acqEmail ? ' (' + acqEmail + ')' : ''));
+    lines.push('Signer Name - '   + v('dc-signer'));
+    lines.push('Signing Email - ' + v('dc-sign-email'));
+    extraWrap.querySelectorAll('.da-signer-block').forEach(block=>{
+      const n = block.dataset.n;
+      lines.push('Signer ' + n + ' Name - '  + block.querySelector('.da-extra-name').value.trim());
+      lines.push('Signer ' + n + ' Email - ' + block.querySelector('.da-extra-email').value.trim());
+    });
+    lines.push('Name on Deed - '  + v('dc-deed'));
+    lines.push('Address - '       + v('dc-address'));
+    lines.push('Contract Signed - ' + fmtLong(v('dc-contractdate')));
+    return lines.join('\n');
+  }
+
+  let submitted = false;
+  el('dc-sink').addEventListener('load', ()=>{ if(submitted) showSuccess(true); });
+  function showSuccess(sent){
+    el('dc-summary').textContent = buildSummary();
+    el('dc-success-text').textContent = sent ? 'Sent to TC' : 'Ready to send';
+    el('dc-note').textContent = sent
+      ? "Cancellation details have been emailed to Transactions@1houroffers.com"
+      : "Endpoint not connected yet — copy this and send it to your TC, or paste your Web App URL into this form's config.";
+    form.style.display = 'none';
+    el('dc-success').classList.add('show');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    if(!validate()){ el('dc-status').textContent = 'Check the highlighted fields.'; return; }
+    el('dc-status').textContent = '';
+    el('dc-summary-field').value = buildSummary();
+    if(SCRIPT_URL){
+      el('dc-submit').disabled = true; el('dc-submit').textContent = 'Sending…';
+      submitted = true;
+      form.action = SCRIPT_URL; form.method = 'POST'; form.target = 'dc-sink';
+      form.submit();
+    } else { showSuccess(false); }
+  });
+  el('dc-copy').addEventListener('click',()=>{
+    navigator.clipboard.writeText(buildSummary()).then(()=>{ const b = el('dc-copy'), o = b.textContent; b.textContent = 'Copied ✓'; setTimeout(()=>{ b.textContent = o; }, 1500); }).catch(()=>{});
+  });
+  function resetForm(){
+    form.reset();
+    form.querySelectorAll('.da-acq-btn').forEach(b=>b.classList.remove('on'));
+    el('dc-acq-val').value=''; el('dc-acq-email').value='';
+    el('dc-acq-err').classList.remove('show');
+    acClose(); extraWrap.innerHTML = ''; cdCal.reset();
+    fields.forEach(f=>{ el(f.id).classList.remove('err'); el(f.id).closest('.da-field').classList.remove('show-err'); });
+    el('dc-submit').disabled = false; el('dc-submit').innerHTML = 'Send to TC &rarr;';
+    el('dc-status').textContent = '';
+    submitted = false;
+    el('dc-success').classList.remove('show');
+    form.style.display = '';
+  }
+  el('dc-again').addEventListener('click', resetForm);
+  el('dc-reset').addEventListener('click', resetForm);
 })();
 </script>
 <script>
