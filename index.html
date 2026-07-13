@@ -2791,12 +2791,30 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
       node.addEventListener('mousedown', e=>{ e.preventDefault(); acChoose(+node.dataset.i); });
     });
   }
+  // Sub-line under each address: shows what will prefill so the ACQ can tell at a
+  // glance whether the info is on file or they'll need to enter it manually.
+  // A dash (—) means that field is blank on the deal.
+  function dealSub(d){
+    const dash = '—';
+    const yes = '<span style="color:#2e9e5b;font-weight:700">✓</span>';
+    const no  = '<span style="color:var(--coral);font-weight:700">✗</span>';
+    const rows = [
+      'Seller On Deed - ' + (d.nameOnDeed ? esc(d.nameOnDeed) : dash),
+      'Signer - '         + (d.signer     ? esc(d.signer)     : dash),
+      'Email ' + (d.signingEmail ? yes : no)
+    ];
+    if(d.signer2 || d.signer2Email){
+      rows.push('Signer 2 - ' + (d.signer2 ? esc(d.signer2) : dash));
+      rows.push('Email ' + (d.signer2Email ? yes : no));
+    }
+    return rows.join('<br>');
+  }
   function dealRows(q){
     const ql = (q||'').toLowerCase();
     return DEALS
-      .filter(d => { const a=(d.address||'').toLowerCase(), n=(d.nameOnDeed||'').toLowerCase(); return !ql || a.includes(ql) || n.includes(ql); })
+      .filter(d => { const a=(d.address||'').toLowerCase(), n=(d.nameOnDeed||'').toLowerCase(), s=(d.signer||'').toLowerCase(); return !ql || a.includes(ql) || n.includes(ql) || s.includes(ql); })
       .slice(0, 100)
-      .map(d => ({ main: esc(d.address), sub: esc(d.nameOnDeed||''), full: d.address, deal: d }));
+      .map(d => ({ main: esc(d.address), sub: dealSub(d), full: d.address, deal: d }));
   }
   function showList(q){ acRender(dealRows(q)); }
 
