@@ -2843,13 +2843,27 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
   });
   addrEl.addEventListener('blur', ()=>{ setTimeout(acClose, 150); });
 
-  // Load the under-contract deals once on page load (silent fallback to manual entry).
+  // Load the under-contract deals once on page load via JSONP (a <script> tag).
+  // Apps Script blocks a normal cross-origin fetch() from GitHub Pages, but a
+  // script tag isn't restricted. Silent fallback to manual entry if it can't load.
+  // sort key = street NAME (drop the leading house number + any leading N/S/E/W)
+  function streetKey(address){
+    var s = String(address||'').split(',')[0].trim();
+    s = s.replace(/^\s*\d+[a-z]?(-\d+)?\s+/i, '');   // "7806-08 Wentworth" -> "Wentworth"
+    s = s.replace(/^(n|s|e|w|ne|nw|se|sw|north|south|east|west|northeast|northwest|southeast|southwest)\.?\s+/i, '');
+    return s.toLowerCase();
+  }
+  window.__ohoDeals = function(list){
+    if(Array.isArray(list)) DEALS = list.slice().sort(function(a,b){ return streetKey(a.address).localeCompare(streetKey(b.address)); });
+    if(document.activeElement === addrEl) showList('');   // refresh if the box is already open
+  };
   (function loadDeals(){
     if(!SCRIPT_URL) return;
-    fetch(SCRIPT_URL + '?list=deals')
-      .then(r => r.json())
-      .then(list => { if(Array.isArray(list)) DEALS = list; })
-      .catch(()=>{});
+    const s = document.createElement('script');
+    s.src = SCRIPT_URL + '?list=deals&callback=__ohoDeals';
+    s.async = true;
+    s.onerror = function(){ if(s.parentNode) s.parentNode.removeChild(s); };
+    document.head.appendChild(s);
   })();
 
   /* === Quick-add builders for Additional Terms ===
