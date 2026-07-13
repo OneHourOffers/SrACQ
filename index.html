@@ -1769,8 +1769,22 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
         <input type="hidden" id="ad-acq-val" name="acq">
         <input type="hidden" id="ad-acq-email" name="acqEmail">
 
-        <div class="da-subhead" style="margin-top:22px;">Signer</div>
-        <div class="da-grid">
+        <div class="da-grid" style="margin-top:22px;">
+          <div class="da-field full">
+            <label class="da-label" for="ad-address">Address <span class="req">*</span><span class="da-hint"><a href="https://onehouroffers.github.io/DealTracker/" target="_blank" rel="noopener" style="color:var(--logo-teal);text-decoration:underline;">Check Deal Tracker Site</a> if needed</span></label>
+            <div class="da-ac">
+              <input class="da-input" id="ad-address" name="address" type="text" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" placeholder="Pick a deal under contract — or type an address…">
+              <div class="da-ac-list" id="ad-ac-list" role="listbox"></div>
+            </div>
+            <div class="da-err-msg">Enter the property address.</div>
+          </div>
+
+          <div class="da-field full">
+            <label class="da-label" for="ad-deed">Name on Deed <span class="req">*</span></label>
+            <input class="da-input" id="ad-deed" name="nameOnDeed" type="text" autocomplete="off" placeholder="Exactly as it reads on title">
+            <div class="da-err-msg">Enter the name on the deed.</div>
+          </div>
+
           <div class="da-field">
             <label class="da-label" for="ad-signer">Signer Name <span class="req">*</span></label>
             <input class="da-input" id="ad-signer" name="signer" type="text" autocomplete="off" placeholder="Full legal name of who's signing">
@@ -1787,26 +1801,6 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
 
           <div class="da-add-row">
             <button type="button" class="da-add-signer" id="ad-add-signer">+ Add another signer</button>
-          </div>
-        </div>
-
-        <div class="da-divider"></div>
-
-        <div class="da-subhead">Addendum terms</div>
-        <div class="da-grid">
-          <div class="da-field full">
-            <label class="da-label" for="ad-deed">Name on Deed <span class="req">*</span></label>
-            <input class="da-input" id="ad-deed" name="nameOnDeed" type="text" autocomplete="off" placeholder="Exactly as it reads on title">
-            <div class="da-err-msg">Enter the name on the deed.</div>
-          </div>
-
-          <div class="da-field full">
-            <label class="da-label" for="ad-address">Address <span class="req">*</span></label>
-            <div class="da-ac">
-              <input class="da-input" id="ad-address" name="address" type="text" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" placeholder="Start typing the property address…">
-              <div class="da-ac-list" id="ad-ac-list" role="listbox"></div>
-            </div>
-            <div class="da-err-msg">Enter the property address.</div>
           </div>
 
           <div class="da-field full">
@@ -2774,13 +2768,17 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     {id:'ad-notes',      key:'Additional Terms', req:true}
   ];
 
-  /* === Address autocomplete (Photon / OpenStreetMap — free, no key) === */
-  const PROVIDER = "photon";          // "photon" (no key) | "geoapify" (needs key)
-  const GEOAPIFY_KEY = "";
+  /* === Address = under-contract deal picker (from the deal tracker) ===
+     The dropdown lists deals whose Status is anything EXCEPT CANCEL/CLOSED/JV,
+     fetched live from the addendum Web App (?list=deals). Picking a deal
+     auto-fills Name on Deed + Signer 1/2 from that row. It stays a plain text
+     field, so the ACQ can type a manual address to override — and if the list
+     can't load, the field simply falls back to manual entry. */
   const addrEl = el('ad-address'), acList = el('ad-ac-list');
-  let acItems = [], acActive = -1, acTimer = null, acSeq = 0;
+  let acItems = [], acActive = -1, DEALS = [];
 
   function acClose(){ acList.classList.remove('show'); acList.innerHTML=''; acItems=[]; acActive=-1; addrEl.setAttribute('aria-expanded','false'); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
   function acRender(rows){
     acItems = rows; acActive = -1;
     if(!rows.length){ acClose(); return; }
@@ -2793,41 +2791,45 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
       node.addEventListener('mousedown', e=>{ e.preventDefault(); acChoose(+node.dataset.i); });
     });
   }
+  function dealRows(q){
+    const ql = (q||'').toLowerCase();
+    return DEALS
+      .filter(d => { const a=(d.address||'').toLowerCase(), n=(d.nameOnDeed||'').toLowerCase(); return !ql || a.includes(ql) || n.includes(ql); })
+      .slice(0, 100)
+      .map(d => ({ main: esc(d.address), sub: esc(d.nameOnDeed||''), full: d.address, deal: d }));
+  }
+  function showList(q){ acRender(dealRows(q)); }
+
+  function clearErr(id){ const inp = el(id); if(!inp) return; inp.classList.remove('err'); const f = inp.closest('.da-field'); if(f) f.classList.remove('show-err'); }
+  function fillFromDeal(d){
+    if(!d) return;
+    if(d.nameOnDeed){ el('ad-deed').value = d.nameOnDeed; clearErr('ad-deed'); }
+    if(d.signer){ el('ad-signer').value = d.signer; clearErr('ad-signer'); }
+    if(d.signingEmail){ el('ad-sign-email').value = d.signingEmail; clearErr('ad-sign-email'); }
+    // Signer 2: rebuild the extra-signer block from the deal (the deal is authoritative)
+    extraWrap.innerHTML = '';
+    if(d.signer2 && d.signer2Email){
+      addSigner();
+      const block = extraWrap.querySelector('.da-signer-block:last-child');
+      if(block){
+        block.querySelector('.da-extra-name').value = d.signer2;
+        block.querySelector('.da-extra-email').value = d.signer2Email;
+      }
+    }
+  }
   function acChoose(i){
     const r = acItems[i]; if(!r) return;
     addrEl.value = r.full;
-    addrEl.classList.remove('err'); addrEl.closest('.da-field').classList.remove('show-err');
+    clearErr('ad-address');
     acClose();
+    fillFromDeal(r.deal);
   }
-  function viaPhoton(q){
-    const url='https://photon.komoot.io/api/?q='+encodeURIComponent(q)+'&limit=6&lang=en&lat=39.5&lon=-98.35';
-    return fetch(url).then(r=>r.json()).then(j=>(j.features||[])
-      .filter(f=>(f.properties||{}).countrycode==='US')
-      .map(f=>{
-        const p=f.properties||{};
-        const line1=[p.housenumber, p.street||p.name].filter(Boolean).join(' ');
-        const line2=[p.city||p.county, p.state, p.postcode].filter(Boolean).join(', ');
-        const full=[line1||p.name, line2].filter(Boolean).join(', ');
-        return { main: line1||p.name||full, sub: line2, full: full };
-      }).filter(r=>r.full));
-  }
-  function viaGeoapify(q){
-    const url='https://api.geoapify.com/v1/geocode/autocomplete?text='+encodeURIComponent(q)+'&filter=countrycode:us&format=json&limit=6&apiKey='+GEOAPIFY_KEY;
-    return fetch(url).then(r=>r.json()).then(j=>(j.results||[]).map(p=>({
-      main: p.address_line1 || p.formatted, sub: p.address_line2 || '', full: p.formatted
-    })).filter(r=>r.full));
-  }
-  function acSearch(q){
-    const seq = ++acSeq;
-    const run = (PROVIDER==='geoapify' && GEOAPIFY_KEY) ? viaGeoapify : viaPhoton;
-    run(q).then(rows=>{ if(seq===acSeq) acRender(rows); }).catch(()=>{ if(seq===acSeq) acClose(); });
-  }
-  addrEl.addEventListener('input', ()=>{
-    const q = addrEl.value.trim();
-    clearTimeout(acTimer);
-    if(q.length < 4){ acClose(); return; }
-    acTimer = setTimeout(()=>acSearch(q), 260);
-  });
+
+  // Clicking/focusing shows the FULL list (so they can browse or switch deals);
+  // typing filters it. Keeps browsing easy even after a deal is already picked.
+  addrEl.addEventListener('focus', ()=> showList(''));
+  addrEl.addEventListener('click', ()=> showList(''));
+  addrEl.addEventListener('input', ()=> showList(addrEl.value.trim()));
   addrEl.addEventListener('keydown', e=>{
     if(!acList.classList.contains('show')) return;
     const items = acList.querySelectorAll('.da-ac-item');
@@ -2839,7 +2841,16 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     items.forEach((n,idx)=>n.classList.toggle('active', idx===acActive));
     if(items[acActive]) items[acActive].scrollIntoView({block:'nearest'});
   });
-  addrEl.addEventListener('blur', ()=>{ setTimeout(acClose, 120); });
+  addrEl.addEventListener('blur', ()=>{ setTimeout(acClose, 150); });
+
+  // Load the under-contract deals once on page load (silent fallback to manual entry).
+  (function loadDeals(){
+    if(!SCRIPT_URL) return;
+    fetch(SCRIPT_URL + '?list=deals')
+      .then(r => r.json())
+      .then(list => { if(Array.isArray(list)) DEALS = list; })
+      .catch(()=>{});
+  })();
 
   /* === Quick-add builders for Additional Terms ===
      Each chip opens an inline builder (a date picker and/or a $ stepper) and
