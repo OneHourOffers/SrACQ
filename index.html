@@ -797,6 +797,10 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
       <button class="nav-item" onclick="goSection(this,'tools')"><span class="nav-dot"></span>Quick Links</button>
     </div>
     <div class="nav-section">
+      <div class="nav-section-label">Closer's Script</div>
+      <button class="nav-item" onclick="goSection(this,'closing-script'); loadClosingScript()"><span class="nav-dot"></span>Secret Recipe</button>
+    </div>
+    <div class="nav-section">
       <div class="nav-section-label">InvestorFuse CRM</div>
       <button class="nav-item" onclick="goSection(this,'crm')"><span class="nav-dot"></span>How-To Guide</button>
       <button class="nav-item" onclick="goSection(this,'groups')"><span class="nav-dot"></span>Groups</button>
@@ -1489,6 +1493,18 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
       </div>
     </div>
 
+    <!-- CLOSER'S SCRIPT -->
+    <div id="section-closing-script" class="section">
+      <div class="section-header">
+        <div class="section-eyebrow">Closer's Script</div>
+        <div class="section-title">Secret Recipe</div>
+        <div class="section-sub">The full call flow &mdash; Understand &rarr; Educate &rarr; Discover &rarr; Negotiate &rarr; Close &mdash; with word-for-word lines, objection handlers, and the golden rules.</div>
+      </div>
+      <div class="combine-frame-wrap">
+        <iframe id="cs-frame" class="combine-frame" title="Secret Recipe"></iframe>
+      </div>
+    </div>
+
     <!-- TOOLS -->
     <div id="section-tools" class="section">
       <div class="section-header">
@@ -1985,6 +2001,129 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
     </div>
 
   </main>
+  <template id="cs-doc"><style>
+  :root{
+    --petrol:#034B68; --sky:#37ADDB; --coral:#F48D82; --gold:#FACD88;
+    --ink:#12212B; --gray:#5C6B7A; --line:#DCE5EC; --tint:#F4F8FA; --paper:#FFFFFF;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:#EDF2F6; color:var(--ink);
+    font-family:"Inter","Segoe UI",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+    font-size:16px; line-height:1.5;
+  }
+
+  /* ---------- toolbar ---------- */
+  .bar{
+    position:sticky; top:0; z-index:50; background:var(--petrol); color:#fff;
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    padding:10px 18px; box-shadow:0 1px 0 rgba(0,0,0,.15);
+  }
+  .bar .brand{font-weight:700; letter-spacing:.22em; font-size:11px; color:var(--sky)}
+  .bar .name{font-weight:600; font-size:14px; margin-right:auto}
+  .bar button{
+    font:inherit; font-size:13px; font-weight:600; color:#fff; cursor:pointer;
+    background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.25);
+    border-radius:5px; padding:6px 12px;
+  }
+  .bar button:hover{background:rgba(255,255,255,.2)}
+  .bar button.primary{background:var(--sky); border-color:var(--sky)}
+  .bar button.primary:hover{background:#2b98c2}
+  .bar button:focus-visible, .blk:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
+  #status{font-size:12px; color:var(--gold); min-width:96px}
+
+  /* ---------- page ---------- */
+  .sheet{
+    max-width:880px; margin:26px auto 90px; background:var(--paper);
+    padding:44px 54px 60px; box-shadow:0 2px 18px rgba(3,75,104,.12); border-radius:3px;
+  }
+  h1{font-size:34px; margin:0; color:var(--petrol); letter-spacing:-.01em}
+  .eyebrow{font-size:11px; letter-spacing:.28em; font-weight:700; color:var(--sky); margin-bottom:6px}
+  .flow{color:var(--gray); font-style:italic; padding-bottom:12px; border-bottom:3px solid var(--coral); margin-bottom:26px}
+
+  .phase{margin-top:34px}
+  .phase-head{
+    display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+    border-bottom:2px solid var(--sky); padding-bottom:7px;
+  }
+  .phase-num{font-size:12px; font-weight:700; letter-spacing:.16em; color:var(--sky); white-space:nowrap}
+  .phase-title{font-size:21px; font-weight:700; color:var(--petrol); text-transform:uppercase}
+  .phase-sub{font-size:13px; color:var(--gray); font-style:italic}
+
+  /* ---------- editable blocks ---------- */
+  .blk{
+    position:relative; margin:7px 0; padding:4px 6px; border-radius:4px;
+    transition:background .12s;
+  }
+  .blk:hover{background:#F7FAFC}
+  .blk:focus{outline:none; background:#EEF7FB; box-shadow:inset 0 0 0 1px var(--sky)}
+  .blk[data-empty="1"]::before{content:attr(data-ph); color:#9FB0BD}
+
+  .t-say{border-left:4px solid var(--sky); padding-left:14px; font-size:17px}
+  .t-say::before{content:'\201C'} .t-say::after{content:'\201D'}
+  .t-note{border-left:4px solid var(--gold); padding-left:14px; color:var(--gray); font-style:italic; font-size:14px}
+  .t-label{font-size:11px; font-weight:700; letter-spacing:.2em; color:var(--coral); text-transform:uppercase; margin-top:16px}
+  .t-body{font-size:15px}
+  .t-strong{font-size:15px; font-weight:700}
+  .t-bullet{font-size:15px; padding-left:20px}
+  .t-bullet::before{content:'\25AA'; color:var(--sky); position:absolute; left:2px}
+  .t-branch{font-size:15px}
+  .t-branch .cond{font-size:11.5px; font-weight:700; letter-spacing:.14em; color:var(--petrol); text-transform:uppercase; margin-right:8px}
+  .t-pause{text-align:center; color:var(--coral); font-weight:700; letter-spacing:.2em; font-size:15px; margin:18px 0}
+  .t-banner{
+    background:var(--petrol); color:#fff; text-align:center; font-weight:700;
+    letter-spacing:.2em; font-size:13px; padding:11px; margin:30px 0 4px; border-radius:3px;
+  }
+
+  /* ---------- two-column rows (objections, rules, framework) ---------- */
+  .pair{display:grid; grid-template-columns:230px 1fr; gap:0; border:1px solid var(--line); border-bottom:none}
+  .pair:last-of-type{border-bottom:1px solid var(--line)}
+  .pair > .blk{margin:0; border-radius:0; padding:11px 14px; font-size:14.5px}
+  .pair > .blk:first-child{font-weight:700; background:var(--tint)}
+  .pair.hdr > .blk{background:var(--petrol); color:#fff; font-weight:700; font-size:11px; letter-spacing:.16em; text-transform:uppercase}
+  .sec-title{
+    font-size:13px; font-weight:700; letter-spacing:.22em; color:var(--petrol);
+    text-transform:uppercase; border-bottom:2px solid var(--sky); padding-bottom:6px; margin:40px 0 16px;
+  }
+
+  /* ---------- row controls ---------- */
+  .ctl{
+    position:absolute; left:-84px; top:2px; display:none; gap:3px;
+  }
+  .blk:hover > .ctl, .blk:focus-within > .ctl{display:flex}
+  .ctl button{
+    font:inherit; font-size:10px; font-weight:700; line-height:1; cursor:pointer;
+    background:#fff; color:var(--gray); border:1px solid var(--line); border-radius:4px; padding:4px 6px;
+  }
+  .ctl button:hover{color:var(--petrol); border-color:var(--sky)}
+  .ctl button.del:hover{color:#C0392B; border-color:#C0392B}
+  .addrow{margin:10px 0 0}
+  .addrow button{
+    font:inherit; font-size:11px; font-weight:600; letter-spacing:.06em; cursor:pointer;
+    background:none; color:var(--sky); border:1px dashed var(--sky); border-radius:5px; padding:5px 10px; margin-right:6px;
+  }
+  .addrow button:hover{background:#EEF7FB}
+
+  .hint{
+    max-width:880px; margin:0 auto; padding:14px 18px; font-size:13px; color:var(--gray);
+  }
+  .hint b{color:var(--petrol)}
+
+  /* ---------- print ---------- */
+  @media print{
+    body{background:#fff}
+    .bar,.ctl,.addrow,.hint{display:none !important}
+    .sheet{box-shadow:none; margin:0; padding:0; max-width:none}
+    .phase{break-inside:avoid}
+    .blk:hover{background:none}
+  }
+  @media (max-width:720px){
+    .sheet{padding:24px 20px; margin:12px}
+    .ctl{position:static; display:flex; margin-bottom:4px}
+    .pair{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+body{background:#fff}.sheet{box-shadow:none;margin:0 auto}</style><div class="sheet" id="sheet"><div class="eyebrow">ONE HOUR OFFERS</div><h1 spellcheck="true" data-ph="Title" data-empty="0">SECRET RECIPE</h1><div class="flow" spellcheck="true" data-ph="Framework line" data-empty="0">Understand → Educate → Discover → Negotiate → Close</div><div class="phase"><div class="phase-head"><span class="phase-num" spellcheck="true" data-ph="PHASE" data-empty="0">PHASE 1</span><span class="phase-title" spellcheck="true" data-ph="Name" data-empty="0">Take Control</span><span class="phase-sub" spellcheck="true" data-ph="note" data-empty="0">(2-3 Minutes)</span></div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Hey John, this is (your name), it looks like you spoke with my teammate yesterday regarding (property address) How is it going today?</div><div class="blk t-body" spellcheck="true" data-ph="Text…" data-empty="0">(small talk)</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Awesome. (Jr acq name) filled me in on everything that was going on and I just wanted to make sure I understood everything correctly before we talk numbers.</div><div class="blk t-note" spellcheck="true" data-ph="Coaching note…" data-empty="0">This immediately tells the seller: ✔ They don’t have to repeat themselves.</div></div><div class="phase"><div class="phase-head"><span class="phase-num" spellcheck="true" data-ph="PHASE" data-empty="0">PHASE 2</span><span class="phase-title" spellcheck="true" data-ph="Name" data-empty="0">Confirm the Story</span><span class="phase-sub" spellcheck="true" data-ph="note" data-empty="1"></span></div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">So from what I see (notes)…</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">You’ve owned it about 18 years.</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">It needs a roof and some updating.</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">It’s currently vacant.</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Ideally you’d like to sell sometime this month.</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Did we miss anything important?</div><div class="blk t-body" spellcheck="true" data-ph="Text…" data-empty="0">Let them talk.</div><div class="blk t-note" spellcheck="true" data-ph="Coaching note…" data-empty="0">People trust people who understand them.</div></div><div class="phase"><div class="phase-head"><span class="phase-num" spellcheck="true" data-ph="PHASE" data-empty="0">PHASE 3</span><span class="phase-title" spellcheck="true" data-ph="Name" data-empty="0">Dig One Layer Deeper</span><span class="phase-sub" spellcheck="true" data-ph="note" data-empty="1"></span></div><div class="blk t-label" spellcheck="true" data-ph="Label…" data-empty="0">Now ask</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Instead of rushing into numbers, I’d like to understand the full picture to provide you with the best solution possible… What’s really driving your decision to sell now?</div><div class="blk t-strong" spellcheck="true" data-ph="Bold text…" data-empty="0">Never stop at the first answer.</div><div class="blk t-branch"><span class="cond" spellcheck="true" data-ph="Condition…" data-empty="0">If they give a short answer</span><span>→  </span><span spellcheck="true" data-ph="What to do…" data-empty="0">Reply:</span></div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Tell me a little bit more about it.</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Tell me more.</div><div class="blk t-note" spellcheck="true" data-ph="Coaching note…" data-empty="0">The idea is to get them talking.</div><div class="blk t-label" spellcheck="true" data-ph="Label…" data-empty="0">Then dig deeper</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">What’s been the hardest part?</div><div class="blk t-note" spellcheck="true" data-ph="Coaching note…" data-empty="0">This is where deals are won.</div></div><div class="phase"><div class="phase-head"><span class="phase-num" spellcheck="true" data-ph="PHASE" data-empty="0">PHASE 4</span><span class="phase-title" spellcheck="true" data-ph="Name" data-empty="0">Build Rapport</span><span class="phase-sub" spellcheck="true" data-ph="note" data-empty="1"></span></div><div class="blk t-strong" spellcheck="true" data-ph="Bold text…" data-empty="0">Don’t talk real estate.</div><div class="blk t-strong" spellcheck="true" data-ph="Bold text…" data-empty="0">Talk life.</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Kids</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Military</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Dogs</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Neighborhood</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Sports</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Retirement</div><div class="blk t-label" spellcheck="true" data-ph="Label…" data-empty="0">Then transition</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Sounds like this house has served you well.</div></div><div class="phase"><div class="phase-head"><span class="phase-num" spellcheck="true" data-ph="PHASE" data-empty="0">PHASE 5</span><span class="phase-title" spellcheck="true" data-ph="Name" data-empty="0">Set Expectations</span><span class="phase-sub" spellcheck="true" data-ph="note" data-empty="1"></span></div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Here’s how we work.</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">We’re not Realtors.</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">We buy houses exactly the way they sit.</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">No inspections.</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">No commissions.</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">No repairs.</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">No cleaning.</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">We cover closing costs.</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">You choose the closing date.</div><div class="blk t-strong" spellcheck="true" data-ph="Bold text…" data-empty="0">Pause.</div></div><div class="phase"><div class="phase-head"><span class="phase-num" spellcheck="true" data-ph="PHASE" data-empty="0">PHASE 6</span><span class="phase-title" spellcheck="true" data-ph="Name" data-empty="0">Price Discovery</span><span class="phase-sub" spellcheck="true" data-ph="note" data-empty="1"></span></div><div class="blk t-strong" spellcheck="true" data-ph="Bold text…" data-empty="0">Never give your number first. Instead…</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">What were you hoping to walk away with?</div><div class="blk t-branch"><span class="cond" spellcheck="true" data-ph="Condition…" data-empty="0">If they answer</span><span>→  </span><span spellcheck="true" data-ph="What to do…" data-empty="0">Perfect.</span></div><div class="blk t-branch"><span class="cond" spellcheck="true" data-ph="Condition…" data-empty="0">If they refuse</span><span>→  </span><span spellcheck="true" data-ph="What to do…" data-empty="0">Say:</span></div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Totally understand. I won’t hold your feet to the fire, I am just trying to make sure we’re in the same ballpark before I start putting numbers together. I don’t want to waste your time.</div><div class="blk t-branch"><span class="cond" spellcheck="true" data-ph="Condition…" data-empty="0">If they still refuse</span><span>→  </span><span spellcheck="true" data-ph="What to do…" data-empty="0">Say:</span></div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Here is what I don’t want to do, I don’t want to spend an hour pulling teeth to get you a number you probably won’t like anyway. Instead of going back and forth lets see if I can get you what you’re looking for so we don’t waste each others time.</div><div class="blk t-branch"><span class="cond" spellcheck="true" data-ph="Condition…" data-empty="0">If this doesn’t work</span><span>→  </span><span spellcheck="true" data-ph="What to do…" data-empty="0">Move on.</span></div></div><div class="phase"><div class="phase-head"><span class="phase-num" spellcheck="true" data-ph="PHASE" data-empty="0">PHASE 7</span><span class="phase-title" spellcheck="true" data-ph="Name" data-empty="0">Build the Math</span><span class="phase-sub" spellcheck="true" data-ph="note" data-empty="1"></span></div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Mind if I walk through how we come up with our offers?</div><div class="blk t-note" spellcheck="true" data-ph="Coaching note…" data-empty="0">People LOVE transparency.</div><div class="blk t-label" spellcheck="true" data-ph="Label…" data-empty="0">Example</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">House fixed up…</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Worth around…</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Needs…</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Repairs…</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Holding costs…</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Closing costs…</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Risk…</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Profit…</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">That’s how we come up with our offer. (small talk build rapport)</div><div class="blk t-label" spellcheck="true" data-ph="Label…" data-empty="0">Then</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">I have all the information I need, I am going to go fight for your number. Will you be available in the next 30 mins or so for me to give you a call back to see if we can get something done?</div></div><div class="phase"><div class="blk t-banner" spellcheck="true" data-ph="Banner" data-empty="0">2ND CALL: OFFER CALL — UNLESS NUMBERS WORk ON THE FIRST CALL</div></div><div class="phase"><div class="phase-head"><span class="phase-num" spellcheck="true" data-ph="PHASE" data-empty="0">PHASE 8</span><span class="phase-title" spellcheck="true" data-ph="Name" data-empty="0">The Offer</span><span class="phase-sub" spellcheck="true" data-ph="note" data-empty="1"></span></div><div class="blk t-strong" spellcheck="true" data-ph="Bold text…" data-empty="0">Never say… “My offer is…”</div><div class="blk t-strong" spellcheck="true" data-ph="Bold text…" data-empty="0">Instead…</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Hey there its (your name)….</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Just got done going back and forth with my partner on this.</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Keep in mind our offer is cash, we take the property as is, we can close on your timeframe and well take care of your “painpoint” considering the property does need some work. How close to $65k do you think you can get?</div><div class="blk t-pause" spellcheck="true" data-ph="Emphasis line…" data-empty="0">PAUSE.  SAY NOTHING.  SILENCE SELLS.</div><div class="blk t-body" spellcheck="true" data-ph="Text…" data-empty="0">Let the seller process and react before you say anything.</div><div class="blk t-branch"><span class="cond" spellcheck="true" data-ph="Condition…" data-empty="0">If they push back</span><span>→  </span><span spellcheck="true" data-ph="What to do…" data-empty="0">Say:</span></div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">I completely understand, I am not saying that is our final offer. That is ideally where we would like to be. What would be the best you could do for me? Can we maybe meet somewhere in the middle?</div></div><div class="phase"><div class="phase-head"><span class="phase-num" spellcheck="true" data-ph="PHASE" data-empty="0">PHASE 9</span><span class="phase-title" spellcheck="true" data-ph="Name" data-empty="0">Handle Objections</span><span class="phase-sub" spellcheck="true" data-ph="note" data-empty="1"></span></div><div class="pair hdr"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">They say</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">You say</div></div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">“That’s too low.”</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">“If you don’t mind me asking, why do you feel it is too low?”</div></div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">“I need more.”</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">“What did you have in mind?”</div></div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">“I’ll think about it.”</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">“Absolutely. Usually when someone tells me that it means one of three things… the number, timing, or trust. Which one is it?”</div></div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">“I have another offer.”</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">“Great. What’s keeping you from taking it?”</div></div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">“I want retail.”</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">“Any reason you haven’t gone that route already?”</div></div></div><div class="phase"><div class="phase-head"><span class="phase-num" spellcheck="true" data-ph="PHASE" data-empty="0">PHASE 10</span><span class="phase-title" spellcheck="true" data-ph="Name" data-empty="0">Negotiate</span><span class="phase-sub" spellcheck="true" data-ph="note" data-empty="1"></span></div><div class="blk t-strong" spellcheck="true" data-ph="Bold text…" data-empty="0">Never negotiate against yourself. Instead… Ask.</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">If we could make the numbers work… Are you ready to move forward today?</div><div class="blk t-branch"><span class="cond" spellcheck="true" data-ph="Condition…" data-empty="0">If yes</span><span>→  </span><span spellcheck="true" data-ph="What to do…" data-empty="0">Only then move.</span></div></div><div class="phase"><div class="phase-head"><span class="phase-num" spellcheck="true" data-ph="PHASE" data-empty="0">PHASE 11</span><span class="phase-title" spellcheck="true" data-ph="Name" data-empty="0">Trial Close</span><span class="phase-sub" spellcheck="true" data-ph="note" data-empty="1"></span></div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">It sounds like we’ve solved everything except the number.</div><div class="blk t-body" spellcheck="true" data-ph="Text…" data-empty="0">or</div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">If we can agree on the price… Is there anything stopping you from moving forward?</div></div><div class="phase"><div class="phase-head"><span class="phase-num" spellcheck="true" data-ph="PHASE" data-empty="0">PHASE 12</span><span class="phase-title" spellcheck="true" data-ph="Name" data-empty="0">Close</span><span class="phase-sub" spellcheck="true" data-ph="note" data-empty="1"></span></div><div class="blk t-say" spellcheck="true" data-ph="Line the closer says…" data-empty="0">Perfect. I am going to get a purchase agreement drafted up that we will review together. I want to make sure you know exactly what you are signing so if there are any questions or concerns we can get them handled together.</div><div class="blk t-note" spellcheck="true" data-ph="Coaching note…" data-empty="0">Don’t ask. Assume.</div></div><div class="phase"><div class="phase-head"><span class="phase-num" spellcheck="true" data-ph="PHASE" data-empty="0">PHASE 13</span><span class="phase-title" spellcheck="true" data-ph="Name" data-empty="0">Paperwork</span><span class="phase-sub" spellcheck="true" data-ph="note" data-empty="1"></span></div><div class="blk t-body" spellcheck="true" data-ph="Text…" data-empty="0">Explain exactly what happens (process)</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Contract</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Title</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Calls</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Closing</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Money</div><div class="blk t-bullet" spellcheck="true" data-ph="Bullet…" data-empty="0">Timeline</div><div class="blk t-note" spellcheck="true" data-ph="Coaching note…" data-empty="0">Leave no mystery.</div></div><div class="phase"><div class="blk sec-title" spellcheck="true" data-ph="Section title" data-empty="0">The Golden Rules</div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">Never Chase</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">People buy certainty.</div></div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">Ask More Than You Tell</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">80% Questions. 20% Talking.</div></div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">Don’t Sell the House</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">Sell the Outcome. Freedom. No Repairs. No Headaches. Fast Closing.</div></div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">Every Objection Is One Of Four Things</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">Price. Trust. Timing. Decision Maker. Nothing else.</div></div></div><div class="phase"><div class="blk sec-title" spellcheck="true" data-ph="Section title" data-empty="0">The One Hour Offers Framework</div><div class="blk t-body" spellcheck="true" data-ph="Text…" data-empty="0">Every conversation should flow through these five steps:</div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">Understand</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">Confirm the situation and uncover the true motivation.</div></div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">Educate</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">Explain how your process works and why investors buy at a discount.</div></div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">Discover</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">Learn the seller’s price expectations, concerns, and decision-making process.</div></div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">Negotiate</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">Find common ground while protecting your buying criteria.</div></div><div class="pair"><div class="blk" spellcheck="true" data-ph="Left…" data-empty="0">Close</div><div class="blk" spellcheck="true" data-ph="Right…" data-empty="0">Ask for the business, complete the paperwork, and set clear next steps.</div></div></div></div></template>
   <template id="cc-doc"><style>
 :root{
   --bg:#f5f3ef; --surface:#ffffff; --card:#f0ede8; --border:rgba(30,65,100,0.10); --border-hi:rgba(30,65,100,0.22);
@@ -3353,12 +3492,22 @@ function loadCombine(){
     +'</head><body>'+inner+'</body></html>';
   f.setAttribute('data-loaded','1');
 }
+function loadClosingScript(){
+  var f=document.getElementById('cs-frame');
+  if(!f || f.getAttribute('data-loaded')) return;
+  var inner=document.getElementById('cs-doc').innerHTML;
+  f.srcdoc='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">'
+    +'<meta name="viewport" content="width=device-width, initial-scale=1.0">'
+    +'<link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap\" rel=\"stylesheet\">'
+    +'</head><body>'+inner+'</body></html>';
+  f.setAttribute('data-loaded','1');
+}
 function goDay(btn, n) {
   document.querySelectorAll('.dcard').forEach(c => c.classList.remove('on'));
   document.querySelectorAll('.day-tab').forEach(b => b.classList.remove('on'));
   document.getElementById('day' + n).classList.add('on');
   btn.classList.add('on');
-  ['schedule','crm','groups','dead','tools','draft-agreement','draft-addendum','draft-cancellation'].forEach(s => {
+  ['schedule','crm','groups','dead','tools','draft-agreement','draft-addendum','draft-cancellation','closing-script'].forEach(s => {
     document.getElementById('section-' + s).classList.remove('active');
   });
   document.getElementById('section-training').classList.add('active');
