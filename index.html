@@ -4183,6 +4183,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     if(acqVal) lines.push('Sr. ACQ - ' + acqVal + (acqEmail ? ' (' + acqEmail + ')' : ''));
     const jrVal = el('da-jr-val').value;
     if(jrVal) lines.push("Jr. ACQ (Tee'd it up) - " + jrVal);
+    lines.push('');
     lines.push('Signer Name - '   + v('da-signer'));
     lines.push('Signing Email - ' + v('da-sign-email'));
     extraWrap.querySelectorAll('.da-signer-block').forEach(block=>{
@@ -4196,6 +4197,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     lines.push('Address - '       + v('da-address'));
     lines.push('APN - '           + v('da-apn'));
     lines.push('COE - '           + fmtCoeDate(v('da-coe')));
+    lines.push('');
     lines.push('POC - '           + v('da-poc'));
     lines.push('Phone - '         + v('da-phone'));
     lines.push('E-Mail - '        + v('da-email'));
