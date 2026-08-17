@@ -729,6 +729,33 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
 .da-ac-item:last-child { border-bottom: none; }
 .da-ac-item:hover, .da-ac-item.active { background: var(--accent-light); }
 .da-ac-sub { display: block; font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+/* === Title Company picker (Draft Agreement) === */
+.da-tc-item { display: flex; align-items: flex-start; gap: 10px; }
+.da-tc-item-main { flex: 1; min-width: 0; }
+.da-tc-item-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.da-tc-item-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; word-break: break-word; }
+.da-tc-pill { font-family: "Archivo", sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; padding: 3px 7px; border-radius: 4px; background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
+.da-tc-pill.attorney { background: var(--amber-dim); color: var(--amber); border-color: rgba(196,122,18,0.25); }
+.da-tc-pill.all-states { background: var(--teal-dim); color: var(--teal); border-color: rgba(30,138,110,0.25); }
+.da-tc-pill.match { background: var(--teal-dim); color: var(--teal); border-color: rgba(30,138,110,0.25); }
+.da-tc-group { padding: 7px 12px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); background: var(--surface2); border-bottom: 1px solid var(--border); cursor: default; }
+.da-ac-item.da-tc-other { color: var(--accent); font-weight: 600; font-size: 12.5px; }
+
+.da-tc-picked { grid-column: 1 / -1; display: none; gap: 12px; align-items: flex-start; background: rgba(30,65,100,0.03); border: 1px solid var(--border2); border-left: 3px solid var(--logo-teal); border-radius: var(--radius); padding: 14px 16px; }
+.da-tc-picked.show { display: flex; }
+.da-tc-picked-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.da-tc-picked-name { font-family: "Archivo", sans-serif; font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.25; }
+.da-tc-picked-meta { font-size: 11.5px; color: var(--text-sec); word-break: break-word; }
+.da-tc-picked-meta b { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-right: 6px; }
+.da-tc-change { background: none; border: 1px solid var(--border2); color: var(--text-sec); border-radius: 8px; padding: 6px 12px; font-family: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer; flex-shrink: 0; transition: background 0.12s, color 0.12s, border-color 0.12s; }
+.da-tc-change:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+.da-tc-manual { grid-column: 1 / -1; display: none; flex-direction: column; gap: 14px; padding: 16px; border: 1px dashed var(--border2); border-radius: var(--radius); background: rgba(30,65,100,0.03); }
+.da-tc-manual.show { display: flex; }
+.da-tc-manual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+.da-tc-manual-grid .da-field.full { grid-column: 1 / -1; }
+.da-tc-warn { font-size: 11px; font-weight: 600; color: var(--coral); margin-top: 3px; }
+@media (max-width: 720px) { .da-tc-manual-grid { grid-template-columns: 1fr; } }
 .da-snips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .da-snips-label { font-size: 11px; color: var(--text-muted); font-weight: 600; }
 .da-snip { background: var(--accent-light); color: var(--accent); border: none; border-radius: 999px; padding: 5px 12px; font-family: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer; transition: background 0.12s, color 0.12s; }
@@ -1731,6 +1758,59 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
             <div class="da-err-msg"></div>
           </div>
         </div>
+
+        <div class="da-divider"></div>
+
+        <div class="da-subhead">Title Company <span class="req">*</span></div>
+        <div class="da-grid">
+          <div class="da-field full">
+            <label class="da-label" for="da-tc-input">Who's closing this deal <span class="req">*</span><span class="da-hint">search by state, company, or escrow officer</span></label>
+            <div class="da-ac">
+              <input class="da-input" id="da-tc-input" type="text" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" placeholder="Search title companies…">
+              <div class="da-ac-list" id="da-tc-list" role="listbox"></div>
+            </div>
+            <div class="da-err-msg">Pick the title company for this closing.</div>
+          </div>
+
+          <div class="da-tc-picked" id="da-tc-picked">
+            <div class="da-tc-picked-main">
+              <div class="da-tc-picked-name" id="da-tc-picked-name"></div>
+              <div class="da-tc-picked-meta" id="da-tc-picked-officer"></div>
+              <div class="da-tc-picked-meta"><b>Email</b><span id="da-tc-picked-email"></span></div>
+              <div class="da-tc-picked-meta" id="da-tc-picked-phone-row"><b>Phone</b><span id="da-tc-picked-phone"></span></div>
+              <div class="da-tc-warn" id="da-tc-picked-warn" hidden></div>
+            </div>
+            <button type="button" class="da-tc-change" id="da-tc-change">Change</button>
+          </div>
+
+          <div class="da-tc-manual" id="da-tc-manual">
+            <div class="da-signer-block-head">
+              <div class="da-signer-block-title">Not on the list — entered by hand</div>
+              <button type="button" class="da-remove-signer" id="da-tc-manual-cancel">Use the list instead</button>
+            </div>
+            <div class="da-tc-manual-grid">
+              <div class="da-field full">
+                <label class="da-label" for="da-tc-m-name">Title Company <span class="req">*</span></label>
+                <input class="da-input" id="da-tc-m-name" type="text" autocomplete="off" placeholder="Company name exactly as it should read">
+                <div class="da-err-msg">Enter the title company name.</div>
+              </div>
+              <div class="da-field">
+                <label class="da-label" for="da-tc-m-email">Title Email <span class="req">*</span></label>
+                <input class="da-input" id="da-tc-m-email" type="email" autocomplete="off" placeholder="escrow@titleco.com">
+                <div class="da-err-msg">Enter a valid title email.</div>
+              </div>
+              <div class="da-field">
+                <label class="da-label" for="da-tc-m-phone">Title Phone <span class="da-hint">optional</span></label>
+                <input class="da-input" id="da-tc-m-phone" type="tel" inputmode="numeric" autocomplete="off" placeholder="(555) 555-5555">
+                <div class="da-err-msg">Enter a 10-digit phone number.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" id="da-title" name="title">
+        <input type="hidden" id="da-title-email" name="titleEmail">
+        <input type="hidden" id="da-title-phone" name="titlePhone">
 
         <div class="da-divider"></div>
 
@@ -3562,13 +3642,19 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     { state: "Nevada", company: "Equity Title of Nevada", email: "LaylaM@equitynv.com", officer: "Layla McMachen", phone: "(702) 462-6000" },
     { state: "Oklahoma", company: "First American Title", email: "cfournier@firstam.com", officer: "Candice Fournier", phone: "(405) 529-5521" },
     { state: "Ohio", company: "Empora Title", email: "Sabrina@emporatitle.com", officer: "Sabrina Boykin", phone: "(614) 363-0823" },
-    { state: "Ohio (Cleveland)", frequent: true, company: "Innovative Title", email: "support@innovativetitle.net", secondary: "lisa@innovativetitle.net", officer: "Lisa Redden", phone: "(216) 635-0870" },
+    { state: "Ohio (Cleveland)", company: "Innovative Title", email: "support@innovativetitle.net", secondary: "lisa@innovativetitle.net", officer: "Lisa Redden", phone: "(216) 635-0870" },
+    { state: "Ohio (Cleveland)", frequent: true, company: "Superior Title", email: "scott@superiortitle.org", officer: "Scott Fazekas", phones: [{ label: "Office", number: "(614) 326-1900" }, { label: "Mobile", number: "(740) 361-1556", note: "ask before sharing" }] },
     { state: "Ohio (Cleveland)", company: "National Title Experts", email: "anthony@mynationaltitle.com", officer: "Anthony Tagliarina, Mark Madden", phones: [{ label: "Anthony", number: "(440) 725-8111" }, { label: "Mark", number: "(216) 299-2047" }], secondary: "mark@mynationaltitle.com" },
     { state: "Pennsylvania", attorney: true, company: "Parkland Abstract", email: "info@parklandabstract.com", officer: "Matthew Koff", phone: "(610) 433-3790" },
     { state: "Texas", company: "Stellar Title", email: "Mavs@stellartitleco.com", officer: "Crystal Aguirre", phone: "(817) 479-5677", secondary: "Crystal@Stellartitleco.com" },
     { state: "Washington", company: "Ticor Title Co", email: "Teambarker@ticortitle.com", officer: "", phone: "(253) 765-7255" },
     { state: "All States", allStates: true, company: "Closed Title", email: "NStalls@investors-title.com", officer: "", phone: "", secondary: "wdevenne@closedtitle.com" }
   ];
+
+  /* Single source of truth: the Draft Agreement's Title Company picker reads
+     this exact list. Add or edit a partner here and it shows up in both places
+     — the cards below AND the form's picker — with no other changes. */
+  window.OHO_TITLE_COMPANIES = companies;
 
   const grid = document.getElementById("tc-grid");
   const searchInput = document.getElementById("tc-search");
@@ -3866,6 +3952,95 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
   });
 
   addrEl.addEventListener('blur', ()=>{ setTimeout(acClose, 120); });
+
+  /* === Address formatting ======================================================
+     The intake email's subject line ("Agreement Needed - Oak St/ Gilbert, AZ"),
+     the DocuSign document name and the Address field itself are all built by
+     splitting the address on commas — so an address typed by hand
+     ("966 S Oak St Gilbert AZ 85233") used to arrive as one unsplittable blob.
+     This puts the commas back where they belong:
+
+         <street>, <city>, <state>, <zip>
+
+     Picking from the autocomplete already produces that shape; this just makes
+     hand-typed and half-typed addresses match. If it can't confidently find the
+     state or the street type (a PO box, a rural route), it leaves what was
+     typed exactly as-is rather than guessing and mangling it.
+  ============================================================================ */
+  const TC_ST = { alabama:"AL",alaska:"AK",arizona:"AZ",arkansas:"AR",california:"CA",colorado:"CO",connecticut:"CT",delaware:"DE",florida:"FL",georgia:"GA",hawaii:"HI",idaho:"ID",illinois:"IL",indiana:"IN",iowa:"IA",kansas:"KS",kentucky:"KY",louisiana:"LA",maine:"ME",maryland:"MD",massachusetts:"MA",michigan:"MI",minnesota:"MN",mississippi:"MS",missouri:"MO",montana:"MT",nebraska:"NE",nevada:"NV","new hampshire":"NH","new jersey":"NJ","new mexico":"NM","new york":"NY","north carolina":"NC","north dakota":"ND",ohio:"OH",oklahoma:"OK",oregon:"OR",pennsylvania:"PA","rhode island":"RI","south carolina":"SC","south dakota":"SD",tennessee:"TN",texas:"TX",utah:"UT",vermont:"VT",virginia:"VA",washington:"WA","west virginia":"WV",wisconsin:"WI",wyoming:"WY","district of columbia":"DC" };
+
+  // Street types that are almost never a city word — tried first.
+  const ADDR_SUF_CORE = /^(st|street|ave|av|avenue|blvd|boulevard|dr|drive|rd|road|ln|lane|ct|court|pl|place|cir|circle|ter|terrace|pkwy|parkway|hwy|highway|trl|trail|sq|square|expy|expressway|fwy|freeway|tpke|turnpike|plz|plaza|xing|crossing|aly|alley|jct|junction|mnr|manor|lndg|landing|sta|station|cyn|canyon|rdg|ridge|holw|hollow)\.?$/i;
+  // Street types that double as ordinary words ("Park City", "Valley View") — only
+  // used when no core suffix was found, so they can't hijack a city name.
+  const ADDR_SUF_SOFT = /^(way|loop|run|path|pass|pt|point|bnd|bend|cv|cove|crk|creek|vis|vista|pk|park|vw|view|walk|row|gln|glen|hl|hill|hls|hills|mdw|meadow|mdws|meadows|spg|spring|spgs|springs|smt|summit|vly|valley|vlg|village|rnch|ranch|spur|hbr|harbor|is|island|kn|knoll|orch|orchard|shr|shore|trce|trace|grv|grove|est|estates|ext|extension)\.?$/i;
+  // Unit designators that belong with the street, not the city.
+  const ADDR_UNIT = /^(apt|apartment|unit|ste|suite|bldg|building|fl|floor|rm|room|lot|trlr|trailer|spc|space|no|#.*)\.?$/i;
+  // A quadrant trailing the street type, e.g. "900 Peachtree Rd NE, Atlanta".
+  // Abbreviations only — a spelled-out "North" usually starts a city (North Las Vegas).
+  const ADDR_DIR = /^(n|s|e|w|ne|nw|se|sw)\.?$/i;
+
+  function normalizeAddress(raw){
+    let s = String(raw == null ? '' : raw).replace(/\s+/g,' ').trim();
+    if(!s) return '';
+    s = s.replace(/\s*,\s*/g, ', ').replace(/^[,\s]+/,'').replace(/[,\s]+$/,'');
+    if(!s) return '';
+    let parts = s.split(',').map(x=>x.trim()).filter(Boolean);
+    const clean = w => String(w||'').replace(/[.,]/g,'');
+
+    // --- ZIP off the end ---
+    let zip = '';
+    let tail = parts[parts.length-1] || '';
+    const mz = tail.match(/(\d{5}(?:-\d{4})?)$/);
+    if(mz){
+      zip = mz[1];
+      tail = tail.slice(0, mz.index).replace(/[,\s]+$/,'').trim();
+      if(tail) parts[parts.length-1] = tail; else parts.pop();
+    }
+    if(!parts.length) return s;
+
+    // --- state off the end (2-letter abbreviation, one-word or two-word name) ---
+    let state = '';
+    const tt = (parts[parts.length-1] || '').split(' ').filter(Boolean);
+    const two = clean(tt.slice(-2).join(' ')).toLowerCase();
+    const one = clean(tt[tt.length-1] || '').toLowerCase();
+    const abbrs = Object.keys(TC_ST).map(k => TC_ST[k]);
+    if(tt.length >= 2 && TC_ST[two]){ state = clean(tt.slice(-2).join(' ')); tt.splice(-2,2); }
+    else if(tt.length && TC_ST[one]){ state = clean(tt[tt.length-1]); tt.pop(); }
+    else if(tt.length && /^[A-Za-z]{2}$/.test(one) && abbrs.indexOf(one.toUpperCase()) !== -1){ state = clean(tt.pop()).toUpperCase(); }
+    if(!state) return s;                      // no state found — leave it exactly as typed
+    if(tt.length) parts[parts.length-1] = tt.join(' '); else parts.pop();
+    if(!parts.length) return s;
+
+    // --- street vs city ---
+    let street = '', city = '';
+    if(parts.length >= 2){
+      street = parts.slice(0, parts.length-1).join(', ');
+      city   = parts[parts.length-1];
+    } else {
+      const t = parts[0].split(' ').filter(Boolean);
+      let cut = -1;
+      for(let i=1;i<t.length-1;i++) if(ADDR_SUF_CORE.test(t[i])) cut = i;
+      if(cut === -1) for(let i=1;i<t.length-1;i++) if(ADDR_SUF_SOFT.test(t[i])) cut = i;
+      if(cut === -1) return s;                // no recognizable street type — leave it alone
+      let end = cut;
+      if(end+1 < t.length-1 && ADDR_DIR.test(t[end+1])) end = end + 1;                          // "Rd NE"
+      if(end+1 < t.length-1 && ADDR_UNIT.test(t[end+1])) end = Math.min(end+2, t.length-2);     // "St Apt 4B"
+      street = t.slice(0, end+1).join(' ');
+      city   = t.slice(end+1).join(' ');
+    }
+    if(!street || !city) return s;
+    // gentle capitalization: only words typed in all-lowercase get a capital,
+    // so "966 s oak st gilbert az" cleans up while "McDonald" / "JFK" are left alone
+    const capWords = x => x.split(' ').map(w => /^[a-z][a-z'’\-]*\.?$/.test(w) ? w.charAt(0).toUpperCase() + w.slice(1) : w).join(' ');
+    return [capWords(street), capWords(city), capWords(state), zip].filter(Boolean).join(', ');
+  }
+
+  // tidy it up the moment they leave the field, so what they see is what the TC gets
+  addrEl.addEventListener('blur', ()=>{
+    const fixed = normalizeAddress(addrEl.value);
+    if(fixed && fixed !== addrEl.value) addrEl.value = fixed;
+  });
 
   // POC + general E-Mail default to signer 1 until edited by hand
   const pocEl = el('da-poc'), genEmailEl = el('da-email');
@@ -4166,6 +4341,226 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     form.addEventListener('reset', ()=>{ selected = null; view = new Date(today.getFullYear(), today.getMonth(), 1); close(); });
   })();
 
+  /* === Title Company picker ===================================================
+     Reads the SAME list that powers the Title Companies page
+     (window.OHO_TITLE_COMPANIES), so partners are maintained in exactly one
+     place. Picking one fills the three hidden fields DocuSign expects:
+        Title  ·  Title Email  ·  Title Phone Number
+     "Other" swaps in three manual inputs for a company that isn't on the list.
+     Companies whose state matches the property address float to the top.
+  ============================================================================ */
+  // (the state map TC_ST lives with the address formatter above — same list)
+
+  const tcInput   = el('da-tc-input'),
+        tcList    = el('da-tc-list'),
+        tcPicked  = el('da-tc-picked'),
+        tcManual  = el('da-tc-manual'),
+        tcField   = tcInput ? tcInput.closest('.da-field') : null;
+  let tcRows = [], tcActive = -1, tcManualMode = false;
+
+  const tcAll = () => (window.OHO_TITLE_COMPANIES || []);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function tcFmtPhone(s){
+    if(!s) return '';
+    let d = String(s).replace(/\D/g,'');
+    if(d.length === 11 && d[0] === '1') d = d.slice(1);
+    if(d.length !== 10) return String(s).trim();
+    return '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
+  }
+  // Primary contact info: first number / first email on a multi-contact card.
+  function tcPhoneOf(c){ return (c.phones && c.phones.length) ? tcFmtPhone(c.phones[0].number) : (c.phone ? tcFmtPhone(c.phone) : ''); }
+  function tcEmailOf(c){ return (c.email || '').split(',')[0].trim(); }
+  function tcBaseState(c){ return String(c.state || '').replace(/\s*\(.*\)/,'').trim(); }
+
+  // Pull the state out of whatever's in the Address field ("…, Gilbert, Arizona, 85233" or "…, AZ 85233")
+  function tcAddrState(){
+    const parts = (el('da-address').value || '').split(',').map(s=>s.trim()).filter(Boolean);
+    for(let i = parts.length - 1; i >= 0; i--){
+      const raw = parts[i].replace(/\d{5}(-\d{4})?/g,'').replace(/[^A-Za-z\s]/g,'').trim();
+      if(!raw) continue;
+      const low = raw.toLowerCase();
+      if(TC_ST[low]) return low;
+      if(raw.length === 2){
+        const abbr = raw.toUpperCase();
+        const hit = Object.keys(TC_ST).filter(k => TC_ST[k] === abbr)[0];
+        if(hit) return hit;
+      }
+    }
+    return '';
+  }
+  const tcTitle = s => s.replace(/\b\w/g, m => m.toUpperCase());
+
+  function tcClose(){ tcList.classList.remove('show'); tcList.innerHTML=''; tcRows=[]; tcActive=-1; tcInput.setAttribute('aria-expanded','false'); }
+  function tcClearErr(){ tcInput.classList.remove('err'); if(tcField) tcField.classList.remove('show-err'); }
+
+  function tcOpen(query){
+    const q = (query || '').toLowerCase().trim();
+    const st = tcAddrState();
+    let list = tcAll().slice();
+    if(q){
+      list = list.filter(c =>
+        String(c.state||'').toLowerCase().includes(q) ||
+        String(c.company||'').toLowerCase().includes(q) ||
+        (c.officer && c.officer.toLowerCase().includes(q)) ||
+        (c.email && c.email.toLowerCase().includes(q)));
+    }
+    const matches = st ? list.filter(c => tcBaseState(c).toLowerCase() === st) : [];
+    const rest    = list.filter(c => matches.indexOf(c) === -1);
+    // frequent partners lead each pile, same as the Title Companies page
+    const freqFirst = (a,b) => (b.frequent ? 1 : 0) - (a.frequent ? 1 : 0);
+    matches.sort(freqFirst); rest.sort(freqFirst);
+
+    tcRows = []; tcActive = -1;
+    let html = '';
+    const itemHtml = c => {
+      const i = tcRows.push({ type:'company', c }) - 1;
+      const sub = [c.officer, tcEmailOf(c), tcPhoneOf(c)].filter(Boolean).join(' · ');
+      const pill = c.attorney ? 'attorney' : (c.allStates ? 'all-states' : '');
+      return '<div class="da-ac-item" role="option" data-i="' + i + '">'
+        + '<div class="da-tc-item"><div class="da-tc-item-main">'
+        + '<div class="da-tc-item-name">' + esc(c.company) + (c.frequent ? ' ★' : '') + '</div>'
+        + (sub ? '<div class="da-tc-item-sub">' + esc(sub) + '</div>' : '')
+        + '</div><span class="da-tc-pill ' + pill + '">' + esc(c.state) + '</span></div></div>';
+    };
+
+    if(matches.length){
+      html += '<div class="da-tc-group">' + esc(tcTitle(st)) + ' — matches this property</div>';
+      html += matches.map(itemHtml).join('');
+      if(rest.length) html += '<div class="da-tc-group">Other partners</div>';
+    } else if(st && !q){
+      html += '<div class="da-tc-group">No partner listed for ' + esc(tcTitle(st)) + ' — all partners</div>';
+    }
+    html += rest.map(itemHtml).join('');
+    if(!list.length) html += '<div class="da-tc-group">No partner matches that search</div>';
+
+    const oi = tcRows.push({ type:'other' }) - 1;
+    html += '<div class="da-ac-item da-tc-other" role="option" data-i="' + oi + '">+ Other — enter a title company by hand</div>';
+
+    tcList.innerHTML = html;
+    tcList.classList.add('show');
+    tcInput.setAttribute('aria-expanded','true');
+    tcList.querySelectorAll('.da-ac-item').forEach(node=>{
+      node.addEventListener('mousedown', e=>{ e.preventDefault(); tcChoose(+node.dataset.i); });
+    });
+  }
+
+  function tcChoose(i){
+    const row = tcRows[i];
+    if(!row) return;
+    if(row.type === 'other'){ tcShowManual(); tcClose(); tcInput.value=''; return; }
+    tcHideManual();
+    el('da-title').value       = row.c.company;
+    el('da-title-email').value = tcEmailOf(row.c);
+    el('da-title-phone').value = tcPhoneOf(row.c);
+    tcShowPicked(row.c);
+    tcClose();
+    tcInput.value = '';
+    tcClearErr();
+  }
+
+  function tcShowPicked(c){
+    el('da-tc-picked-name').textContent = c.company;
+    const officerLine = el('da-tc-picked-officer');
+    const bits = [c.state];
+    if(c.officer) bits.push(c.officer);
+    officerLine.textContent = bits.filter(Boolean).join('  ·  ');
+    el('da-tc-picked-email').textContent = tcEmailOf(c);
+    const ph = tcPhoneOf(c);
+    el('da-tc-picked-phone').textContent = ph || '';
+    el('da-tc-picked-phone-row').hidden = !ph;
+    // heads-up if the partner's state isn't the property's state
+    const st = tcAddrState(), warn = el('da-tc-picked-warn');
+    if(st && !c.allStates && tcBaseState(c).toLowerCase() !== st){
+      warn.textContent = '⚠ Property is in ' + tcTitle(st) + ', but this partner is listed for ' + tcBaseState(c) + '.';
+      warn.hidden = false;
+    } else { warn.hidden = true; warn.textContent=''; }
+    tcPicked.classList.add('show');
+    tcInput.placeholder = 'Search title companies…';
+  }
+  function tcHidePicked(){ tcPicked.classList.remove('show'); }
+
+  function tcShowManual(){
+    tcManualMode = true;
+    tcHidePicked();
+    tcManual.classList.add('show');
+    el('da-title').value=''; el('da-title-email').value=''; el('da-title-phone').value='';
+    tcClearErr();
+    el('da-tc-m-name').focus();
+  }
+  function tcHideManual(){
+    tcManualMode = false;
+    tcManual.classList.remove('show');
+    ['da-tc-m-name','da-tc-m-email','da-tc-m-phone'].forEach(id=>{
+      const inp = el(id);
+      inp.classList.remove('err');
+      inp.closest('.da-field').classList.remove('show-err');
+    });
+  }
+  function tcClearManualInputs(){ ['da-tc-m-name','da-tc-m-email','da-tc-m-phone'].forEach(id=>{ el(id).value=''; }); }
+
+  if(tcInput){
+    tcInput.addEventListener('focus', ()=>tcOpen(tcInput.value));
+    tcInput.addEventListener('click', ()=>tcOpen(tcInput.value));   // clicking an already-focused box re-opens the list
+    tcInput.addEventListener('input', ()=>tcOpen(tcInput.value));
+    tcInput.addEventListener('keydown', e=>{
+      if(!tcList.classList.contains('show')){
+        if(e.key === 'ArrowDown'){ e.preventDefault(); tcOpen(tcInput.value); }
+        return;
+      }
+      const items = tcList.querySelectorAll('.da-ac-item');
+      if(e.key === 'ArrowDown'){ e.preventDefault(); tcActive = Math.min(tcActive+1, items.length-1); }
+      else if(e.key === 'ArrowUp'){ e.preventDefault(); tcActive = Math.max(tcActive-1, 0); }
+      else if(e.key === 'Enter'){ if(tcActive >= 0){ e.preventDefault(); tcChoose(+items[tcActive].dataset.i); } return; }
+      else if(e.key === 'Escape'){ tcClose(); return; }
+      else return;
+      items.forEach((n,i)=>n.classList.toggle('active', i===tcActive));
+      if(items[tcActive]) items[tcActive].scrollIntoView({block:'nearest'});
+    });
+    document.addEventListener('click', e=>{ if(!tcList.contains(e.target) && e.target !== tcInput) tcClose(); });
+    // reopen on the next tick — the document-level click handler above fires
+    // after this one and would otherwise close the list we just opened
+    const tcReopen = () => setTimeout(()=>{ tcInput.focus(); tcOpen(''); }, 0);
+    el('da-tc-change').addEventListener('click', ()=>{
+      tcHidePicked();
+      el('da-title').value=''; el('da-title-email').value=''; el('da-title-phone').value='';
+      tcReopen();
+    });
+    el('da-tc-manual-cancel').addEventListener('click', ()=>{
+      tcHideManual(); tcClearManualInputs();
+      el('da-title').value=''; el('da-title-email').value=''; el('da-title-phone').value='';
+      tcReopen();
+    });
+    el('da-tc-m-phone').addEventListener('blur', e=>{ e.target.value = tcFmtPhone(e.target.value) || e.target.value; });
+  }
+
+  // Returns the first bad input when something's missing, else null. Also copies
+  // the manual inputs into the hidden fields that actually get submitted.
+  function tcValidate(){
+    if(tcManualMode){
+      let firstBad = null;
+      const name = el('da-tc-m-name'), mail = el('da-tc-m-email'), phone = el('da-tc-m-phone');
+      [[name, !name.value.trim()],
+       [mail, !mail.value.trim() || !emailRe.test(mail.value.trim())],
+       [phone, !!phone.value.trim() && phone.value.replace(/\D/g,'').length !== 10]
+      ].forEach(pair=>{
+        const inp = pair[0], bad = pair[1];
+        inp.classList.toggle('err', bad);
+        inp.closest('.da-field').classList.toggle('show-err', bad);
+        if(bad && !firstBad) firstBad = inp;
+      });
+      if(firstBad) return firstBad;
+      el('da-title').value       = name.value.trim();
+      el('da-title-email').value = mail.value.trim();
+      el('da-title-phone').value = tcFmtPhone(phone.value.trim());
+      return null;
+    }
+    const bad = !el('da-title').value.trim();
+    tcInput.classList.toggle('err', bad);
+    if(tcField) tcField.classList.toggle('show-err', bad);
+    return bad ? tcInput : null;
+  }
+
   function validate(){
     let ok=true, firstBad=null;
     const acqErr = document.getElementById('da-acq-err');
@@ -4194,6 +4589,8 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
         if(bad) ok = false;
       });
     });
+    const tcBad = tcValidate();
+    if(tcBad){ ok = false; if(!firstBad) firstBad = tcBad; }
     if(firstBad) firstBad.focus();
     return ok;
   }
@@ -4220,6 +4617,10 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     lines.push('Address - '       + v('da-address'));
     lines.push('APN - '           + v('da-apn'));
     lines.push('COE - '           + fmtCoeDate(v('da-coe')));
+    lines.push('');
+    lines.push('Title - '              + v('da-title'));
+    lines.push('Title Email - '        + v('da-title-email'));
+    lines.push('Title Phone Number - ' + v('da-title-phone'));
     lines.push('');
     lines.push('POC - '           + v('da-poc'));
     lines.push('Phone - '         + v('da-phone'));
@@ -4252,6 +4653,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
 
   form.addEventListener('submit', e=>{
     e.preventDefault();
+    // last-chance comma tidy — covers a submit that never fired the blur (Enter key, autofill)
+    const fixedAddr = normalizeAddress(addrEl.value);
+    if(fixedAddr && fixedAddr !== addrEl.value) addrEl.value = fixedAddr;
     if(!validate()){ el('da-status').textContent = 'Check the highlighted fields.'; return; }
     el('da-status').textContent = '';
     el('da-summary-field').value = buildSummary();
@@ -4289,6 +4693,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
     acClose();
     autoGrow(); updateChips(); ppReset();
     fields.forEach(f=>{ el(f.id).classList.remove('err'); el(f.id).closest('.da-field').classList.remove('show-err'); });
+    // Title Company picker back to square one
+    tcHideManual(); tcClearManualInputs(); tcHidePicked(); tcClose(); tcClearErr();
+    tcInput.value=''; el('da-title').value=''; el('da-title-email').value=''; el('da-title-phone').value='';
     extraWrap.innerHTML = '';
     el('da-submit').disabled = false;
     el('da-submit').innerHTML = 'Send to TC &rarr;';
