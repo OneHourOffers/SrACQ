@@ -1668,21 +1668,14 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
           <button type="button" class="da-acq-btn" data-acq="Nathan Myers" data-acq-email="Nathan@1houroffers.com">Nathan Myers</button>
           <button type="button" class="da-acq-btn" data-acq="Steven Ramirez" data-acq-email="Steven@1houroffers.com">Steven Ramirez</button>
           <button type="button" class="da-acq-btn" data-acq="Davon Marquez" data-acq-email="Davon@1houroffers.com">Davon Marquez</button>
-          <button type="button" class="da-acq-btn" data-acq="Amanda Novacek" data-acq-email="Amanda@1houroffers.com">Amanda Novacek</button>
         </div>
         <div class="da-acq-err" id="da-acq-err">Pick who's sending this contract.</div>
         <input type="hidden" id="da-acq-val" name="acq">
         <input type="hidden" id="da-acq-email" name="acqEmail">
 
-        <div class="da-subhead" style="margin-top:22px;">Jr. ACQ — who Tee'd it up <span style="text-transform:none; letter-spacing:0; font-weight:400; color:var(--text-muted); margin-left:4px;">(optional)</span></div>
-        <div class="da-acq" id="da-jr">
-          <button type="button" class="da-acq-btn" data-jr="Amanda">Amanda</button>
-          <button type="button" class="da-acq-btn" data-jr="Davon">Davon</button>
-          <button type="button" class="da-acq-btn" data-jr="Steven">Steven</button>
-        </div>
         <input type="hidden" id="da-jr-val" name="jrAcq">
 
-        <div class="da-subhead">Signer</div>
+        <div class="da-subhead" style="margin-top:22px;">Signer</div>
         <div class="da-grid">
           <div class="da-field">
             <label class="da-label" for="da-signer">Signer Name <span class="req">*</span></label>
@@ -1910,7 +1903,6 @@ body { background: var(--bg); color: var(--text); font-family: "Archivo", sans-s
           <button type="button" class="da-acq-btn" data-acq="Nathan Myers" data-acq-email="Nathan@1houroffers.com">Nathan Myers</button>
           <button type="button" class="da-acq-btn" data-acq="Steven Ramirez" data-acq-email="Steven@1houroffers.com">Steven Ramirez</button>
           <button type="button" class="da-acq-btn" data-acq="Davon Marquez" data-acq-email="Davon@1houroffers.com">Davon Marquez</button>
-          <button type="button" class="da-acq-btn" data-acq="Amanda Novacek" data-acq-email="Amanda@1houroffers.com">Amanda Novacek</button>
         </div>
         <div class="da-acq-err" id="ad-acq-err">Pick who's sending this addendum.</div>
         <input type="hidden" id="ad-acq-val" name="acq">
@@ -4311,16 +4303,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lbClose(); }
       el('da-acq-val').value = btn.dataset.acq || '';
       el('da-acq-email').value = btn.dataset.acqEmail || '';
       document.getElementById('da-acq-err').classList.remove('show');
-    });
-  });
-
-  // Jr. ACQ "who tee'd it up" selector (single-select, optional — click again to clear)
-  document.querySelectorAll('#da-jr .da-acq-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const already = btn.classList.contains('on');
-      document.querySelectorAll('#da-jr .da-acq-btn').forEach(b=>b.classList.remove('on'));
-      if(already){ el('da-jr-val').value = ''; }
-      else { btn.classList.add('on'); el('da-jr-val').value = btn.dataset.jr || ''; }
     });
   });
 
